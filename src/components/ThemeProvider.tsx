@@ -11,9 +11,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children, initialTheme }: { children: ReactNode; initialTheme: string }) => {
     const [theme, setTheme] = useState(initialTheme);
-    const [mounted] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMounted(true);
         // Check localStorage for saved theme preference
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme) {

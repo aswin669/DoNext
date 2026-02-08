@@ -19,9 +19,11 @@ const NAV_ITEMS = [
 export default function Sidebar() {
     const pathname = usePathname();
     const [user, setUser] = useState<{ name: string, email: string, profilePicture?: string } | null>(null);
-    const [mounted] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMounted(true);
         const fetchUser = async () => {
             try {
                 const res = await fetch("/api/user/settings");
