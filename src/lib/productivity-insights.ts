@@ -29,7 +29,8 @@ export class ProductivityInsightsService {
                     include: { habit: true }
                 }),
                 // Get real pomodoro session data
-                (prisma as any).pomodoroSession.findMany({
+                // @ts-expect-error - prisma types may not be fully generated
+                prisma.pomodoroSession.findMany({
                     where: { 
                         userId,
                         completedAt: { gte: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) }

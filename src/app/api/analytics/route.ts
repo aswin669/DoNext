@@ -50,7 +50,7 @@ export async function GET() {
         });
 
         // 3. Habit Stats
-        // @ts-ignore
+        // @ts-expect-error - prisma types may not be fully generated
         const habitData = await prisma.habit.findMany({
             where: { userId: user.id },
             include: { completions: true }
@@ -79,7 +79,7 @@ export async function GET() {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         thirtyDaysAgo.setHours(0, 0, 0, 0);
         
-        // @ts-ignore
+        // @ts-expect-error - prisma types may not be fully generated
         const recentTasks = await prisma.task.findMany({
             where: {
                 userId: user.id,
@@ -129,7 +129,7 @@ export async function GET() {
             const endOfDay = new Date(startOfDay);
             endOfDay.setHours(23, 59, 59, 999);
             
-            // @ts-ignore
+            // @ts-expect-error - prisma types may not be fully generated
             const dayTasks = await prisma.task.findMany({
                 where: {
                     userId: user.id,

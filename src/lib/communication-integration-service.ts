@@ -474,7 +474,8 @@ export class CommunicationIntegrationService {
     private static async sendPushNotification(connection: CommunicationConnection, notification: any): Promise<boolean> {
         try {
             // Get user's push subscriptions from database
-            const subscriptions = await (prisma as any).pushSubscription.findMany({
+            // @ts-expect-error - prisma types may not be fully generated
+            const subscriptions = await prisma.pushSubscription.findMany({
                 where: { userId: connection.userId }
             }).catch(() => []);
 

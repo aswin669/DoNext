@@ -582,7 +582,8 @@ export class TeamCollaborationService {
             }
             
             // Check for existing invitation
-            const existingInvitation = await (prisma as any).teamInvitation.findFirst({
+            // @ts-expect-error - prisma types may not be fully generated
+            const existingInvitation = await prisma.teamInvitation.findFirst({
                 where: {
                     teamId,
                     inviteeEmail,
@@ -598,7 +599,8 @@ export class TeamCollaborationService {
             const expiryDate = new Date();
             expiryDate.setDate(expiryDate.getDate() + 7); // 7-day expiry
             
-            const invitation = await (prisma as any).teamInvitation.create({
+            // @ts-expect-error - prisma types may not be fully generated
+            const invitation = await prisma.teamInvitation.create({
                 data: {
                     teamId,
                     inviteeEmail,
@@ -652,7 +654,8 @@ export class TeamCollaborationService {
             }
             
             // Find pending invitations for this email
-            const invitations = await (prisma as any).teamInvitation.findMany({
+            // @ts-expect-error - prisma types may not be fully generated
+            const invitations = await prisma.teamInvitation.findMany({
                 where: {
                     inviteeEmail: user.email,
                     status: 'Pending',
@@ -691,7 +694,8 @@ export class TeamCollaborationService {
     static async acceptInvitation(invitationId: string, userId: string): Promise<TeamMembership> {
         try {
             // Get invitation
-            const invitation = await (prisma as any).teamInvitation.findUnique({
+            // @ts-expect-error - prisma types may not be fully generated
+            const invitation = await prisma.teamInvitation.findUnique({
                 where: { id: invitationId }
             });
             
@@ -748,7 +752,8 @@ export class TeamCollaborationService {
             });
             
             // Mark invitation as accepted
-            await (prisma as any).teamInvitation.update({
+            // @ts-expect-error - prisma types may not be fully generated
+            await prisma.teamInvitation.update({
                 where: { id: invitationId },
                 data: {
                     status: 'Accepted',
@@ -769,7 +774,8 @@ export class TeamCollaborationService {
     static async rejectInvitation(invitationId: string, userId: string): Promise<void> {
         try {
             // Get invitation
-            const invitation = await (prisma as any).teamInvitation.findUnique({
+            // @ts-expect-error - prisma types may not be fully generated
+            const invitation = await prisma.teamInvitation.findUnique({
                 where: { id: invitationId }
             });
             
@@ -787,7 +793,8 @@ export class TeamCollaborationService {
             }
             
             // Mark invitation as rejected
-            await (prisma as any).teamInvitation.update({
+            // @ts-expect-error - prisma types may not be fully generated
+            await prisma.teamInvitation.update({
                 where: { id: invitationId },
                 data: {
                     status: 'Rejected',
@@ -814,7 +821,8 @@ export class TeamCollaborationService {
                 throw new Error("Team not found or access denied");
             }
             
-            const invitations = await (prisma as any).teamInvitation.findMany({
+            // @ts-expect-error - prisma types may not be fully generated
+            const invitations = await prisma.teamInvitation.findMany({
                 where: { teamId },
                 orderBy: { createdAt: 'desc' }
             });
@@ -832,7 +840,8 @@ export class TeamCollaborationService {
     static async cancelInvitation(invitationId: string, ownerId: string): Promise<void> {
         try {
             // Get invitation with team
-            const invitation = await (prisma as any).teamInvitation.findUnique({
+            // @ts-expect-error - prisma types may not be fully generated
+            const invitation = await prisma.teamInvitation.findUnique({
                 where: { id: invitationId },
                 include: { team: true }
             });
@@ -852,7 +861,8 @@ export class TeamCollaborationService {
             }
             
             // Delete invitation
-            await (prisma as any).teamInvitation.delete({
+            // @ts-expect-error - prisma types may not be fully generated
+            await prisma.teamInvitation.delete({
                 where: { id: invitationId }
             });
         } catch (error) {

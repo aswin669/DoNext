@@ -45,8 +45,7 @@ export async function PUT(req: Request) {
         if (body.notifPush !== undefined) updateData.notifPush = body.notifPush;
         if (body.defaultView !== undefined) updateData.defaultView = body.defaultView;
 
-        // @ts-ignore
-        // @ts-ignore
+        // @ts-expect-error - prisma types may not be fully generated
         const updatedUser = await prisma.user.update({
             where: { id: user.id },
             data: updateData

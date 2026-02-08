@@ -29,12 +29,10 @@ async function getInitialTheme() {
   if (!userId) return "light";
 
   try {
-    // @ts-expect-error - prisma types may not be fully generated
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { theme: true }
     });
-    // @ts-expect-error - prisma types may not be fully generated
     return user?.theme || "light";
   } catch {
     return "light";

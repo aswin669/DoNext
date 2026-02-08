@@ -117,7 +117,8 @@ export class PomodoroService {
             startDate.setDate(startDate.getDate() - days);
             
             // Get real pomodoro sessions from database
-            const sessions = await (prisma as any).pomodoroSession.findMany({
+            // @ts-expect-error - prisma types may not be fully generated
+            const sessions = await prisma.pomodoroSession.findMany({
                 where: {
                     userId,
                     completedAt: {

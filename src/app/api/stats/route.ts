@@ -81,7 +81,7 @@ export async function GET() {
         
         // 4b. Enhanced Focus Time Calculation from Pomodoro Sessions
         try {
-            // @ts-ignore
+            // @ts-expect-error - prisma types may not be fully generated
             const pomodoroSessions = await prisma.pomodoroSession.findMany({
                 where: {
                     userId: user.id,
@@ -104,7 +104,7 @@ export async function GET() {
         }
 
         // 5. Critical Tasks (High Priority + Important Category)
-        // @ts-ignore
+        // @ts-expect-error - prisma types may not be fully generated
         const importantTasks = await prisma.task.findMany({
             where: {
                 userId: user.id,
@@ -119,13 +119,13 @@ export async function GET() {
         });
 
         // 6. Learning Progress (Study Habits & Tasks)
-        // @ts-ignore
+        // @ts-expect-error - prisma types may not be fully generated
         const studyHabits = await prisma.habit.findMany({
             where: { userId: user.id, category: "Study" },
             include: { completions: true }
         });
 
-        // @ts-ignore
+        // @ts-expect-error - prisma types may not be fully generated
         const studyTasks = await prisma.task.findMany({
             where: { userId: user.id, category: "Study" }
         });
