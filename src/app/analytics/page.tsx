@@ -1,15 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 
+interface AnalyticsData {
+    weeklyStats: Array<{ day: string; tasks: number; completed: number }>;
+    monthlyStats: Array<{ week: number; tasks: number; completed: number }>;
+    totalTasks: number;
+    completedTasks: number;
+    completionRate: number;
+}
+
+interface DayTask {
+    id: string;
+    title: string;
+    completed: boolean;
+    date: string;
+}
+
 export default function Analytics() {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<AnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
-    const [dayTasks, setDayTasks] = useState<any[]>([]);
+    const [dayTasks, setDayTasks] = useState<DayTask[]>([]);
 
     useEffect(() => {
         const fetchAnalytics = async () => {
@@ -180,7 +194,7 @@ export default function Analytics() {
                                     <span className="material-symbols-outlined text-slate-300">more_horiz</span>
                                 </div>
                                 <div className="space-y-6">
-                                    {(data?.categoryAnalysis || []).map((cat: any) => (
+                                    {(data?.categoryAnalysis || []).map((cat: { name: string; percentage: number }) => (
                                         <div key={cat.name}>
                                             <div className="flex justify-between text-sm mb-2">
                                                 <span className="font-semibold flex items-center gap-2">
@@ -216,7 +230,7 @@ export default function Analytics() {
                                     <button className="text-xs font-bold text-primary hover:underline">Manage Habits</button>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {(data?.habitStats || []).length > 0 ? data.habitStats.map((habit: any) => (
+                                    {(data?.habitStats || []).length > 0 ? data.habitStats.map((habit: { name: string; percentage: number }) => (
                                         <div key={habit.name} className="p-4 border border-slate-50 dark:border-[#222] rounded-2xl flex flex-col items-center text-center">
                                             <div className="relative size-16 mb-3">
                                                 <svg className="size-full -rotate-90" viewBox="0 0 36 36">

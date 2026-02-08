@@ -109,8 +109,8 @@ export function withErrorHandling<T>(
     return async (req: Request, context: T): Promise<NextResponse> => {
         try {
             return await handler(req, context);
-        } catch (error: any) {
-            return createErrorResponse(error);
+        } catch (error: unknown) {
+            return createErrorResponse(error as Error | AppError);
         }
     };
 }
@@ -118,13 +118,14 @@ export function withErrorHandling<T>(
 /**
  * Validates request body against a schema
  */
-export async function validateRequestBody<T>(req: Request, schema: any): Promise<T> {
+export async function validateRequestBody<T>(req: Request, schema: { parse: (body: unknown) => T }): Promise<T> {
     try {
         const body = await req.json();
         return schema.parse(body);
-    } catch (error: any) {
-        if (error.name === 'ZodError') {
-            throw new ValidationError(`Invalid request body: ${error.issues.map((e: any) => e.message).join(', ')}`);
+    } catch (error: unknown) {
+        const zodError = error as { name?: string; issues?: Array<{ message: string }> };
+        if (zodError.name === 'ZodError') {
+            throw new ValidationError(`Invalid request body: ${zodError.issues?.map((e: { message: string }) => e.message).join(', ')}`);
         }
         throw new ValidationError('Invalid JSON in request body');
     }

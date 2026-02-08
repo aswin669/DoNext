@@ -27,15 +27,15 @@ export default function NewTradePage() {
         exitImage: null as File | null
     });
 
-    const handleChange = (e: any) => {
-        const { name, value } = e.target;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.currentTarget;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
     };
 
-    const handleImageChange = (e: any, imageType: 'entryImage' | 'exitImage') => {
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, imageType: 'entryImage' | 'exitImage') => {
         const file = e.target.files?.[0];
         if (file) {
             setFormData(prev => ({
@@ -63,7 +63,7 @@ export default function NewTradePage() {
         return "0.00";
     };
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 

@@ -192,7 +192,7 @@ export default function NewHabit() {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className="block text-sm font-bold text-slate-500 uppercase tracking-wider">Motivation / "Why"</label>
+                                    <label className="block text-sm font-bold text-slate-500 uppercase tracking-wider">Motivation / &quot;Why&quot;</label>
                                     <textarea
                                         className="block w-full rounded-xl border-slate-200 dark:border-[#333] bg-white dark:bg-[#1A1A1A] dark:text-white px-4 py-3 focus:border-primary focus:ring-primary text-sm font-medium placeholder:text-slate-400"
                                         placeholder="I want to feel more grounded and present throughout the day..."

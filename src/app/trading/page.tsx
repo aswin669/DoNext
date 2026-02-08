@@ -5,10 +5,30 @@ import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 
+interface Trade {
+    id: string;
+    symbol: string;
+    status: 'Active' | 'Completed';
+    profitLoss?: number;
+}
+
+interface DailyPlan {
+    id: string;
+    date: string;
+    plan: string;
+}
+
+interface Stats {
+    totalTrades: number;
+    winRate: number;
+    totalProfitLoss: number;
+    consistencyScore: number;
+}
+
 export default function TradingDashboard() {
-    const [trades, setTrades] = useState<any[]>([]);
-    const [dailyPlan, setDailyPlan] = useState<any>(null);
-    const [stats, setStats] = useState<any>({
+    const [trades, setTrades] = useState<Trade[]>([]);
+    const [dailyPlan, setDailyPlan] = useState<DailyPlan | null>(null);
+    const [stats, setStats] = useState<Stats>({
         totalTrades: 0,
         winRate: 0,
         totalProfitLoss: 0,
@@ -40,9 +60,9 @@ export default function TradingDashboard() {
             }
             
             // Calculate stats using the fresh data
-            const completedTrades = tradesData.filter((t: any) => t.status === 'Completed');
-            const winningTrades = completedTrades.filter((t: any) => (t.profitLoss || 0) > 0).length;
-            const totalPL = completedTrades.reduce((sum: number, t: any) => sum + (t.profitLoss || 0), 0);
+            const completedTrades = tradesData.filter((t: Trade) => t.status === 'Completed');
+            const winningTrades = completedTrades.filter((t: Trade) => (t.profitLoss || 0) > 0).length;
+            const totalPL = completedTrades.reduce((sum: number, t: Trade) => sum + (t.profitLoss || 0), 0);
             
             setStats({
                 totalTrades: tradesData.length,
@@ -85,7 +105,7 @@ export default function TradingDashboard() {
                         {/* Daily Plan Section */}
                         {dailyPlan && (
                             <div className="bg-white dark:bg-[#1A1A1A] p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-[#222]">
-                                <h2 className="text-lg font-bold mb-4">Today's Trading Plan</h2>
+                                <h2 className="text-lg font-bold mb-4">Today&apos;s Trading Plan</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                     <div>
                                         <p className="text-xs text-slate-400 font-bold uppercase">Market Bias</p>

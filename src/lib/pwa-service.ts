@@ -56,7 +56,7 @@ export class PWAService {
      */
     static isPWAInstalled(): boolean {
         return window.matchMedia('(display-mode: standalone)').matches || 
-               (window.navigator as any).standalone === true;
+               (window.navigator as unknown as { standalone?: boolean }).standalone === true;
     }
     
     /**
@@ -77,7 +77,7 @@ export class PWAService {
                 id: task.id || `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 offline: true,
                 createdAt: new Date()
-            };
+            } as unknown as Task;
             
             pendingTasks.push(offlineTask);
             localStorage.setItem('pendingTasks', JSON.stringify(pendingTasks));
@@ -85,7 +85,7 @@ export class PWAService {
             // Register background sync if available
             if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
                 const registration = await navigator.serviceWorker.ready;
-                await (registration as any).sync.register('sync-tasks');
+                await (registration as unknown as { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-tasks');
             }
         } catch (error) {
             console.error('Failed to save offline task:', error);
@@ -111,7 +111,7 @@ export class PWAService {
             // Register background sync if available
             if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
                 const registration = await navigator.serviceWorker.ready;
-                await (registration as any).sync.register('sync-habits');
+                await (registration as unknown as { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-habits');
             }
         } catch (error) {
             console.error('Failed to save offline habit:', error);
@@ -157,12 +157,12 @@ export class PWAService {
      */
     static async showInstallPrompt(): Promise<boolean> {
         // Check if beforeinstallprompt event is available
-        const beforeInstallPrompt = (window as any).beforeInstallPromptEvent;
+        const beforeInstallPrompt = (window as unknown as { beforeInstallPromptEvent?: { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> } }).beforeInstallPromptEvent;
         
         if (beforeInstallPrompt) {
             try {
                 // Show the install prompt
-                const result = await beforeInstallPrompt.prompt();
+                await beforeInstallPrompt.prompt();
                 
                 // Wait for the user to respond to the prompt
                 const userChoice = await beforeInstallPrompt.userChoice;
@@ -241,8 +241,8 @@ export class PWAService {
         try {
             if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
                 const registration = await navigator.serviceWorker.ready;
-                await (registration as any).sync.register('sync-tasks');
-                await (registration as any).sync.register('sync-habits');
+                await (registration as unknown as { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-tasks');
+                await (registration as unknown as { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-habits');
             }
         } catch (error) {
             console.error('Manual sync failed:', error);

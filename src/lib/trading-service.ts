@@ -1,3 +1,20 @@
+interface DailyPlanData {
+    date: Date;
+    marketBias: 'Bullish' | 'Bearish' | 'Neutral';
+    goals: string;
+    maxRisk: number;
+    maxRiskPercent: number;
+    accountSize: number;
+    notes?: string;
+}
+
+interface DailyPlan extends DailyPlanData {
+    id: string;
+    userId: string;
+    createdAt: Date;
+    status: 'Active' | 'Completed';
+}
+
 /**
  * Trading Service
  * Handles trade planning, execution, and review with discipline and clarity
@@ -7,17 +24,9 @@ export class TradingService {
     /**
      * Create daily trading plan
      */
-    static async createDailyPlan(userId: string, planData: {
-        date: Date;
-        marketBias: 'Bullish' | 'Bearish' | 'Neutral';
-        goals: string;
-        maxRisk: number; // in currency
-        maxRiskPercent: number; // percentage of account
-        accountSize: number;
-        notes?: string;
-    }): Promise<any> {
+    static async createDailyPlan(userId: string, planData: DailyPlanData): Promise<DailyPlan> {
         try {
-            const plan = {
+            const plan: DailyPlan = {
                 id: `plan_${Date.now()}`,
                 userId,
                 date: planData.date,
@@ -42,7 +51,7 @@ export class TradingService {
     /**
      * Get daily trading plan
      */
-    static async getDailyPlan(userId: string, date: Date): Promise<any> {
+    static async getDailyPlan(userId: string, date: Date): Promise<DailyPlan | null> {
         try {
             const startDate = new Date(date);
             startDate.setHours(0, 0, 0, 0);
@@ -76,7 +85,7 @@ export class TradingService {
         templateId?: string;
         entryImage?: string;
         exitImage?: string;
-    }): Promise<any> {
+    }): Promise<{ id: string; symbol: string; status: string }> {
         try {
             // Calculate risk-reward ratio
             const riskRewardRatio = tradeData.rewardAmount / tradeData.riskAmount;
@@ -123,7 +132,7 @@ export class TradingService {
         executionPrice: number;
         executionTime: Date;
         notes?: string;
-    }): Promise<any> {
+    }): Promise<{ id: string; status: string }> {
         try {
             const trade = {
                 id: tradeId,
@@ -151,7 +160,7 @@ export class TradingService {
         reason: 'TargetHit' | 'StopLoss' | 'ManualExit' | 'Cancelled';
         notes?: string;
         exitImage?: string;
-    }): Promise<any> {
+    }): Promise<{ id: string; status: string }> {
         try {
             // Calculate P&L
             const trade = {
@@ -202,7 +211,7 @@ export class TradingService {
         mistakes?: string;
         lessons?: string;
         improvements?: string;
-    }): Promise<any> {
+    }): Promise<{ id: string; tradeId: string }> {
         try {
             const entry = {
                 id: `journal_${Date.now()}`,
@@ -230,7 +239,7 @@ export class TradingService {
     static async getPerformanceSummary(_userId: string, _period?: {
         startDate: Date;
         endDate: Date;
-    }): Promise<any> {
+    }): Promise<{ totalTrades: number; winRate: number; totalProfitLoss: number }> {
         try {
             // Calculate performance metrics
             const summary = {
@@ -266,7 +275,7 @@ export class TradingService {
         riskManagement: string;
         defaultRiskRewardRatio: number;
         tags?: string[];
-    }): Promise<any> {
+    }): Promise<{ id: string; name: string }> {
         try {
             const template = {
                 id: `template_${Date.now()}`,
@@ -393,7 +402,7 @@ export class TradingService {
     /**
      * Get trading calendar events
      */
-    static async getCalendarEvents(_userId: string, _month: Date): Promise<any[]> {
+    static async getCalendarEvents(_userId: string, _month: Date): Promise<Array<{ id: string; date: Date; type: string; title: string; time: string; importance?: string }>> {
         try {
             const events = [
                 {
@@ -429,7 +438,7 @@ export class TradingService {
         time: Date;
         message: string;
         notificationMethod: 'Email' | 'Push' | 'Both';
-    }): Promise<any> {
+    }): Promise<{ id: string; userId: string }> {
         try {
             const reminder = {
                 id: `reminder_${Date.now()}`,

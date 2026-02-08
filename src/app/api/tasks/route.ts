@@ -13,7 +13,7 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const completed = searchParams.get("completed");
 
-        const where: any = { userId: user.id };
+        const where: { userId: string; completed?: boolean } = { userId: user.id };
         if (completed !== null) {
             where.completed = completed === "true";
         }
@@ -48,10 +48,11 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json(newTask);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Task POST Error:", error);
-        if (error.name === 'ZodError') {
-            return NextResponse.json({ error: "Invalid task data", details: error.errors }, { status: 400 });
+        const zodError = error as { name?: string; errors?: unknown };
+        if (zodError.name === 'ZodError') {
+            return NextResponse.json({ error: "Invalid task data", details: zodError.errors }, { status: 400 });
         }
         return NextResponse.json({ error: "Failed to create task" }, { status: 500 });
     }

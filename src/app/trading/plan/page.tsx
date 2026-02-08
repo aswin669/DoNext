@@ -18,8 +18,8 @@ export default function DailyPlanPage() {
         notes: ""
     });
 
-    const handleChange = (e: any) => {
-        const { name, value } = e.target;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.currentTarget;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -34,7 +34,7 @@ export default function DailyPlanPage() {
         return "0.00";
     };
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 

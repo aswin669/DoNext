@@ -5,10 +5,18 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 
+interface SearchResult {
+    id: string;
+    title: string;
+    type: 'Task' | 'Habit' | 'Routine';
+    category?: string;
+    href: string;
+}
+
 function SearchResultsContent() {
     const searchParams = useSearchParams();
     const query = searchParams.get("q");
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<SearchResult[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -33,14 +41,14 @@ function SearchResultsContent() {
     }, [query]);
 
     if (loading) {
-        return <div className="p-8 text-center">Searching for "{query}"...</div>;
+        return <div className="p-8 text-center">Searching for &quot;{query}&quot;...</div>;
     }
 
     return (
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div>
                 <h1 className="text-2xl font-bold">Search Results</h1>
-                <p className="text-slate-500">Found {results.length} items for "{query}"</p>
+                <p className="text-slate-500">Found {results.length} items for &quot;{query}&quot;</p>
             </div>
 
             <div className="grid grid-cols-1 gap-3">
@@ -73,7 +81,7 @@ function SearchResultsContent() {
                     <div className="bg-slate-50 dark:bg-[#1A1A1A] border-2 border-dashed border-slate-200 dark:border-[#222] rounded-3xl p-12 text-center">
                         <span className="material-symbols-outlined text-4xl text-slate-300 mb-4">search_off</span>
                         <h3 className="text-lg font-bold">No results found</h3>
-                        <p className="text-sm text-slate-400 max-w-xs mx-auto">We couldn't find anything matching your search. Try different keywords or check your spelling.</p>
+                        <p className="text-sm text-slate-400 max-w-xs mx-auto">We couldn&apos;t find anything matching your search. Try different keywords or check your spelling.</p>
                     </div>
                 )}
             </div>

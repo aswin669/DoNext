@@ -28,7 +28,7 @@ export default function Login() {
                 const data = await res.json();
                 setError(data.error || "Login failed");
             }
-        } catch (error) {
+        } catch {
             setError("Something went wrong");
         } finally {
             setLoading(false);
@@ -50,7 +50,7 @@ export default function Login() {
                         <span className="text-2xl font-bold tracking-tight">DoNext</span>
                     </div>
                     <h1 className="text-5xl font-black leading-tight mb-6">
-                        "The secret of your future is hidden in your daily routine."
+                        &quot;The secret of your future is hidden in your daily routine.&quot;
                     </h1>
                     <p className="text-white/80 text-xl leading-relaxed mb-12">
                         Join thousands of high-achievers using DoNext to optimize their workflow and reclaim their time.

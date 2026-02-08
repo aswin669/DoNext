@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
-import SearchBar from "@/components/SearchBar";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 

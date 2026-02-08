@@ -90,7 +90,7 @@ export default function ForgotPassword() {
             <div className="w-full max-w-[480px] mx-auto flex flex-col justify-center p-8">
                 <div className="mb-10 text-left">
                     <h2 className="text-3xl font-bold text-[#151612] dark:text-white leading-tight tracking-[-0.015em] mb-2">Reset Password</h2>
-                    <p className="text-[#76816a] dark:text-gray-400">Enter your email and we'll send you instructions to reset your password.</p>
+                    <p className="text-[#76816a] dark:text-gray-400">Enter your email and we&apos;ll send you instructions to reset your password.</p>
                 </div>
 
                 {error && (
@@ -134,7 +134,7 @@ export default function ForgotPassword() {
                 ) : (
                     <div className="p-4 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-lg text-sm">
                         <p className="font-bold mb-2">Too Many Attempts</p>
-                        <p>You've exceeded the maximum number of password reset attempts. Please try again in 15 minutes or contact support.</p>
+                        <p>You&apos;ve exceeded the maximum number of password reset attempts. Please try again in 15 minutes or contact support.</p>
                     </div>
                 )}
 

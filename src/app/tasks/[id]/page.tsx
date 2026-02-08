@@ -26,6 +26,7 @@ export default function TaskDetail() {
 
     useEffect(() => {
         fetchTask();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     const fetchTask = async () => {
@@ -204,7 +205,7 @@ export default function TaskDetail() {
 
                                                     if (!nextTopic && ts.length > 0) return (
                                                         <div className="bg-emerald-500/10 border-2 border-emerald-500/20 p-6 rounded-2xl text-center">
-                                                            <p className="text-emerald-600 font-black">🎉 All sub-topics completed "one by one"!</p>
+                                                            <p className="text-emerald-600 font-black">🎉 All sub-topics completed &quot;one by one&quot;!</p>
                                                         </div>
                                                     );
 

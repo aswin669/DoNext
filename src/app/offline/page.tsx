@@ -1,35 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 
 export default function OfflinePage() {
     const [isOnline, setIsOnline] = useState(true);
     const [pendingActions, setPendingActions] = useState(0);
 
-    useEffect(() => {
-        // Check online status
-        const updateOnlineStatus = () => {
-            setIsOnline(navigator.onLine);
-        };
-
-        // Listen for online/offline events
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-
-        // Initial check
-        updateOnlineStatus();
-
-        // Check for pending offline actions
-        checkPendingActions();
-
-        return () => {
-            window.removeEventListener('online', updateOnlineStatus);
-            window.removeEventListener('offline', updateOnlineStatus);
-        };
-    }, []);
-
-    const checkPendingActions = async () => {
+    const checkPendingActions = useCallback(async () => {
         try {
             // Check IndexedDB for pending actions
             if ('indexedDB' in window) {
@@ -75,7 +53,7 @@ export default function OfflinePage() {
             
             setPendingActions(taskCount + habitCount);
         }
-    };
+    }, []);
 
     const syncPendingActions = async () => {
         try {
@@ -99,6 +77,31 @@ export default function OfflinePage() {
         window.location.reload();
     };
 
+    useEffect(() => {
+        // Check online status
+        const updateOnlineStatus = () => {
+            setIsOnline(navigator.onLine);
+        };
+
+        // Listen for online/offline events
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // Initial check
+        updateOnlineStatus();
+
+        return () => {
+            window.removeEventListener('online', updateOnlineStatus);
+            window.removeEventListener('offline', updateOnlineStatus);
+        };
+    }, []);
+
+    useEffect(() => {
+        // Check for pending offline actions
+        checkPendingActions();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
@@ -109,7 +112,7 @@ export default function OfflinePage() {
                         </span>
                     </div>
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                        {isOnline ? 'Connection Restored' : 'You\'re Offline'}
+                        {isOnline ? 'Connection Restored' : 'You&apos;re Offline'}
                     </h1>
                     <p className="text-gray-600 dark:text-gray-300">
                         {isOnline 
@@ -144,7 +147,7 @@ export default function OfflinePage() {
                         </div>
 
                         <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
-                            <h3 className="font-semibold text-amber-800 dark:text-amber-200 mb-2">What\'s limited offline:</h3>
+                            <h3 className="font-semibold text-amber-800 dark:text-amber-200 mb-2">What&apos;s limited offline:</h3>
                             <ul className="text-sm text-amber-700 dark:text-amber-300 text-left space-y-1">
                                 <li className="flex items-center">
                                     <span className="material-symbols-outlined text-base mr-2">warning</span>
@@ -171,7 +174,7 @@ export default function OfflinePage() {
                                     {pendingActions} Pending Actions
                                 </h3>
                                 <p className="text-sm text-green-700 dark:text-green-300">
-                                    These will sync automatically when you\'re back online
+                                    These will sync automatically when you&apos;re back online
                                 </p>
                             </div>
                             <button

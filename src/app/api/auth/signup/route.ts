@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { AuthService } from "@/lib/auth-service";
 import { validateRequestBody, createErrorResponse, createSuccessResponse } from "@/lib/errors";
 import { signupSchema, SignupInput } from "@/lib/validation";
@@ -15,7 +14,7 @@ export async function POST(req: Request) {
         await AuthService.createSession(user.id);
 
         return createSuccessResponse({ message: "User created" });
-    } catch (error: any) {
+    } catch (error: unknown) {
         return createErrorResponse(error);
     }
 }

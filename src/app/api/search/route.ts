@@ -40,9 +40,9 @@ export async function GET(req: Request) {
         });
 
         const results = [
-            ...tasks.map((t: any) => ({ id: t.id, title: t.title, type: 'Task', category: t.category, href: `/tasks/${t.id}` })),
-            ...habits.map((h: any) => ({ id: h.id, title: h.name, type: 'Habit', category: h.category, href: `/habits` })),
-            ...routines.map((r: any) => ({ id: r.id, title: r.task, type: 'Routine', category: r.category, href: `/routine` }))
+            ...tasks.map((t: { id: string; title: string; category?: string }) => ({ id: t.id, title: t.title, type: 'Task', category: t.category, href: `/tasks/${t.id}` })),
+            ...habits.map((h: { id: string; name: string; category?: string }) => ({ id: h.id, title: h.name, type: 'Habit', category: h.category, href: `/habits` })),
+            ...routines.map((r: { id: string; task: string; category?: string }) => ({ id: r.id, title: r.task, type: 'Routine', category: r.category, href: `/routine` }))
         ];
 
         return NextResponse.json(results);

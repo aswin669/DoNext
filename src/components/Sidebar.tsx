@@ -19,10 +19,9 @@ const NAV_ITEMS = [
 export default function Sidebar() {
     const pathname = usePathname();
     const [user, setUser] = useState<{ name: string, email: string, profilePicture?: string } | null>(null);
-    const [mounted, setMounted] = useState(false);
+    const [mounted] = useState(true);
 
     useEffect(() => {
-        setMounted(true);
         const fetchUser = async () => {
             try {
                 const res = await fetch("/api/user/settings");
@@ -68,7 +67,7 @@ export default function Sidebar() {
                 <nav className="flex flex-col gap-1">
                     {mounted ? (
                         <>
-                            {NAV_ITEMS.map((item: any) => {
+                            {NAV_ITEMS.map((item: { href: string; icon: string; label: string; submenu?: Array<{ href: string; label: string }> }) => {
                                 const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
                                 const hasSubmenu = item.submenu && item.submenu.length > 0;
                                 const showSubmenu = hasSubmenu && (pathname.startsWith(item.href));
@@ -89,7 +88,7 @@ export default function Sidebar() {
                                         </Link>
                                         {showSubmenu && hasSubmenu && (
                                             <div className="ml-6 mt-1 flex flex-col gap-1">
-                                                {item.submenu.map((subitem: any) => (
+                                                {item.submenu?.map((subitem: { href: string; label: string }) => (
                                                     <Link
                                                         key={subitem.href}
                                                         href={subitem.href}

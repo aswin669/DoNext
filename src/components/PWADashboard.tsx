@@ -12,11 +12,6 @@ export default function PWADashboard() {
     const [swStatus, setSwStatus] = useState<'unsupported' | 'installing' | 'installed' | 'waiting' | 'active'>('unsupported');
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
 
-    useEffect(() => {
-        initializePWA();
-        setupEventListeners();
-    }, []);
-
     const initializePWA = async () => {
         // Check if running as PWA
         setIsPWA(PWAService.isPWAInstalled());
@@ -38,11 +33,11 @@ export default function PWADashboard() {
         
         // Check notification permission
         if ('Notification' in window) {
-            setNotificationPermission(Notification.permission);
+            setNotificationPermission(Notification.permission as NotificationPermission);
         }
         
         // Check for install prompt availability
-        setInstallPromptAvailable(!!(window as any).beforeInstallPromptEvent);
+        setInstallPromptAvailable(!!(window as unknown as { beforeInstallPromptEvent?: Event }).beforeInstallPromptEvent);
         
         // Check pending data
         updatePendingCounts();
@@ -52,7 +47,7 @@ export default function PWADashboard() {
         // Listen for beforeinstallprompt event
         const handleBeforeInstallPrompt = (e: Event) => {
             e.preventDefault();
-            (window as any).beforeInstallPromptEvent = e;
+            (window as unknown as { beforeInstallPromptEvent?: Event }).beforeInstallPromptEvent = e;
             setInstallPromptAvailable(true);
         };
         
@@ -81,6 +76,16 @@ export default function PWADashboard() {
         setPendingTasks(PWAService.getPendingTasks().length);
         setPendingHabits(PWAService.getPendingHabits().length);
     };
+
+    useEffect(() => {
+        initializePWA();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        setupEventListeners();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleInstallClick = async () => {
         const installed = await PWAService.showInstallPrompt();
@@ -230,7 +235,7 @@ export default function PWADashboard() {
                     <ul className="list-disc list-inside space-y-1 text-xs">
                         <li>Install the app for full offline functionality</li>
                         <li>Enable notifications to receive productivity reminders</li>
-                        <li>Offline changes automatically sync when you're back online</li>
+                        <li>Offline changes automatically sync when you&apos;re back online</li>
                         <li>Use the app from your home screen for the best experience</li>
                     </ul>
                 </div>

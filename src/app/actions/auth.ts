@@ -29,9 +29,10 @@ export async function signUpUser(formData: FormData) {
     });
 
     return { success: true, user: { id: user.id, email: user.email } };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Signup error:", error);
-    if (error.code === 'P2002') {
+    const prismaError = error as { code?: string };
+    if (prismaError.code === 'P2002') {
       return { error: "User with this email already exists" };
     }
     return { error: "Something went wrong" };

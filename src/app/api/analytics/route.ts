@@ -32,7 +32,7 @@ export async function GET() {
         // Build intensity data using updatedAt (when task was completed)
         const intensityData: Record<string, number> = {};
         
-        completedTasks.forEach((task: any) => {
+        completedTasks.forEach((task: { updatedAt: Date }) => {
             const taskDate = new Date(task.updatedAt);
             if (!isNaN(taskDate.getTime())) {
                 const dateStr = taskDate.toISOString().split('T')[0];
@@ -40,7 +40,7 @@ export async function GET() {
             }
         });
 
-        habitCompletions.forEach((habit: any) => {
+        habitCompletions.forEach((habit: { date: Date }) => {
             const habitDate = new Date(habit.date);
             if (!isNaN(habitDate.getTime())) {
                 const dateStr = habitDate.toISOString().split('T')[0];
@@ -54,7 +54,7 @@ export async function GET() {
         });
         
         const categoryMap = new Map<string, { total: number; completed: number }>();
-        allTasks.forEach((t: any) => {
+        allTasks.forEach((t: { category?: string; completed: boolean }) => {
             if (t.category) {
                 const current = categoryMap.get(t.category) || { total: 0, completed: 0 };
                 current.total++;
@@ -78,8 +78,8 @@ export async function GET() {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         thirtyDaysAgo.setHours(0, 0, 0, 0);
 
-        const habitStats = habitData.map((h: any) => {
-            const last30Days = h.completions.filter((c: any) => {
+        const habitStats = habitData.map((h: { name: string; completions: Array<{ date: Date }> }) => {
+            const last30Days = h.completions.filter((c: { date: Date }) => {
                 const d = new Date(c.date);
                 return d >= thirtyDaysAgo;
             }).length;
@@ -87,7 +87,7 @@ export async function GET() {
             // Calculate current streak
             let streak = 0;
             const sortedCompletions = h.completions
-                .map((c: any) => new Date(c.date).toISOString().split('T')[0])
+                .map((c: { date: Date }) => new Date(c.date).toISOString().split('T')[0])
                 .sort()
                 .reverse();
             
@@ -124,7 +124,7 @@ export async function GET() {
             }
         });
 
-        const completedCount = recentTasks.filter((t: any) => t.completed).length;
+        const completedCount = recentTasks.filter((t: { completed: boolean }) => t.completed).length;
         const avgCompletion = recentTasks.length > 0 
             ? Math.round((completedCount / recentTasks.length) * 100) 
             : 0;

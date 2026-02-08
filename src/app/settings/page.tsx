@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { useTheme } from "@/components/ThemeProvider";
@@ -16,7 +15,6 @@ export default function Settings() {
     const [notifPush, setNotifPush] = useState(true);
     const [defaultView, setDefaultView] = useState("Dashboard Overview");
     const [showToast, setShowToast] = useState(false);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchSettings = async () => {

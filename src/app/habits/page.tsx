@@ -22,7 +22,6 @@ export default function Habits() {
     const [loading, setLoading] = useState(true);
     const [currentMonthName, setCurrentMonthName] = useState("");
     const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
-    const [activeDay, setActiveDay] = useState(new Date().getDate());
 
     useEffect(() => {
         const date = new Date();

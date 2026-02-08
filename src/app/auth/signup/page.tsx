@@ -29,7 +29,7 @@ export default function Signup() {
                 const data = await res.json();
                 setError(data.error || "Signup failed");
             }
-        } catch (error) {
+        } catch {
             setError("Something went wrong");
         } finally {
             setLoading(false);

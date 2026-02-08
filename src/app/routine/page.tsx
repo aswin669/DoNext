@@ -171,7 +171,7 @@ export default function RoutineManagement() {
                                             ))
                                         ) : (
                                             <div className="py-12 text-center">
-                                                <p className="text-slate-400 font-medium">No routine steps yet. Click "Add New Step" to get started!</p>
+                                                <p className="text-slate-400 font-medium">No routine steps yet. Click &quot;Add New Step&quot; to get started!</p>
                                             </div>
                                         )}
                                     </div>

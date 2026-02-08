@@ -98,7 +98,7 @@ export interface Notification {
 }
 
 // API Response Types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = Record<string, unknown>> {
     success?: boolean;
     error?: string;
     message?: string;

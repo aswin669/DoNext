@@ -11,14 +11,17 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children, initialTheme }: { children: ReactNode; initialTheme: string }) => {
     const [theme, setTheme] = useState(initialTheme);
-    const [mounted, setMounted] = useState(false);
+    const [mounted] = useState(true);
 
     useEffect(() => {
-        setMounted(true);
         // Check localStorage for saved theme preference
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme) {
-            setTheme(savedTheme);
+            // Update the theme directly without setState
+            const root = window.document.documentElement;
+            root.classList.remove("light", "dark");
+            root.classList.add(savedTheme);
+            localStorage.setItem("theme", savedTheme);
         }
     }, []);
 

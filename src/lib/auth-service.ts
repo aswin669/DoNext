@@ -162,8 +162,9 @@ export class AuthService {
             });
 
             return user as AuthUser;
-        } catch (error: any) {
-            if (error.code === 'P2002') {
+        } catch (error: unknown) {
+            const prismaError = error as { code?: string };
+            if (prismaError.code === 'P2002') {
                 throw new Error("User with this email already exists");
             }
             console.error("Registration error:", error);

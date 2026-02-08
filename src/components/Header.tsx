@@ -9,14 +9,10 @@ import { useTheme } from "./ThemeProvider";
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [profilePicture, setProfilePicture] = useState("");
-    const [mounted, setMounted] = useState(false);
+    const [mounted, setMounted] = useState(true);
     const menuRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { theme, setTheme } = useTheme();
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {

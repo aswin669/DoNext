@@ -30,7 +30,7 @@ export async function GET(req: Request) {
         // Filter tasks that were either:
         // 1. Completed on this day (updatedAt within the date range)
         // 2. Created on this day (createdAt within the date range)
-        const tasks = allTasks.filter((task: any) => {
+        const tasks = allTasks.filter((task: { createdAt: Date; updatedAt: Date; completed: boolean }) => {
             const createdDate = new Date(task.createdAt);
             const updatedDate = new Date(task.updatedAt);
             
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
             const completedInRange = task.completed && updatedDate >= startDate && updatedDate <= endDate;
             
             return createdInRange || completedInRange;
-        }).sort((a: any, b: any) => {
+        }).sort((a: { completed: boolean; priority: string; createdAt: Date }, b: { completed: boolean; priority: string; createdAt: Date }) => {
             // Sort by: incomplete first, then by priority, then by date
             if (a.completed !== b.completed) {
                 return a.completed ? 1 : -1;

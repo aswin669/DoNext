@@ -23,7 +23,7 @@ export async function GET() {
         const tasks = await prisma.task.findMany({
             where: { userId: user.id }
         });
-        const completedTasksCount = tasks.filter((t: any) => t.completed).length;
+        const completedTasksCount = tasks.filter((t: { completed: boolean }) => t.completed).length;
         const totalTasksCount = tasks.length;
 
         // 2. Habits Count
@@ -109,7 +109,7 @@ export async function GET() {
 
         for (const habit of studyHabits) {
             // Calculate consistency over last 7 days
-            const completionsLast7Days = habit.completions.filter((c: any) => new Date(c.date) >= last7DaysDate).length;
+            const completionsLast7Days = habit.completions.filter((c: { date: Date }) => new Date(c.date) >= last7DaysDate).length;
             const target = 7; // Assuming daily for simplicity of "progress"
             const percentage = Math.min(Math.round((completionsLast7Days / target) * 100), 100);
             
@@ -125,7 +125,7 @@ export async function GET() {
         // 7. Study Task Schema Extension
         // Process Study Tasks with enhanced metrics
         if (studyTasks.length > 0) {
-            const completedStudyTasks = studyTasks.filter((t: any) => t.completed).length;
+            const completedStudyTasks = studyTasks.filter((t: { completed: boolean }) => t.completed).length;
             const progress = Math.round((completedStudyTasks / studyTasks.length) * 100);
             
             learningProgress.push({
@@ -151,7 +151,7 @@ export async function GET() {
             learningProgress,
             studyMetrics: {
                 totalStudyTasks: studyTasks.length,
-                completedStudyTasks: studyTasks.filter((t: any) => t.completed).length,
+                completedStudyTasks: studyTasks.filter((t: { completed: boolean }) => t.completed).length,
                 studyHabitsCount: studyHabits.length
             }
         });

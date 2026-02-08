@@ -22,7 +22,7 @@ interface Task {
 
 export default function MyTasks() {
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [routine, setRoutine] = useState<any[]>([]);
+    const [routine, setRoutine] = useState<Array<{ id: string; task: string; time: string; completed: boolean }>>([]);
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedDateTasks, setSelectedDateTasks] = useState<Task[]>([]);
@@ -104,13 +104,6 @@ export default function MyTasks() {
     // Group tasks by date
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    const todayTasks = tasks.filter(t => {
-        if (!t.date) return false;
-        const taskDate = new Date(t.date);
-        taskDate.setHours(0, 0, 0, 0);
-        return taskDate.getTime() === today.getTime();
-    });
     
     const previousDaysTasks = tasks.filter(t => {
         if (!t.date) return false;
@@ -194,7 +187,7 @@ export default function MyTasks() {
                                                         Daily Routine
                                                     </h5>
                                                     <div className="space-y-2">
-                                                        {routine.map((item: any) => (
+                                                        {routine.map((item: { id: string; task: string; time: string; completed: boolean; icon?: string }) => (
                                                             <div key={item.id} className={`flex items-center gap-2 p-2 rounded-lg border ${
                                                                 item.completed
                                                                     ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-900/30'

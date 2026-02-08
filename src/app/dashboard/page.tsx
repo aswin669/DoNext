@@ -7,13 +7,51 @@ import Header from "@/components/Header";
 import PWADashboard from "@/components/PWADashboard";
 import { PWAService } from "@/lib/pwa-service";
 
+interface RoutineItem {
+    id: string;
+    task: string;
+    time: string;
+    completed: boolean;
+}
+
+interface WeeklyActivityItem {
+    day: string;
+    tasks: number;
+    focus: number;
+}
+
+interface ImportantTask {
+    id: string;
+    title: string;
+    description?: string;
+    date?: string;
+    time?: string;
+}
+
+interface LearningProgressItem {
+    id: string;
+    title: string;
+    progress: number;
+    icon?: string;
+}
+
+interface Stats {
+    tasksCompleted: number;
+    totalTasks: number;
+    activeHabits: number;
+    focusTimeToday: string;
+    weeklyActivity: WeeklyActivityItem[];
+    importantTasks: ImportantTask[];
+    learningProgress: LearningProgressItem[];
+}
+
 export default function Dashboard() {
     const [currentDate, setCurrentDate] = useState("");
     const [greeting, setGreeting] = useState("Welcome");
     const [user, setUser] = useState<{ name: string } | null>(null);
-    const [routine, setRoutine] = useState<any[]>([]);
-    const [mounted, setMounted] = useState(false);
-    const [stats, setStats] = useState<any>({
+    const [routine, setRoutine] = useState<RoutineItem[]>([]);
+    const [mounted, setMounted] = useState(true);
+    const [stats, setStats] = useState<Stats>({
         tasksCompleted: 0,
         totalTasks: 0,
         activeHabits: 0,
@@ -22,30 +60,6 @@ export default function Dashboard() {
         importantTasks: [],
         learningProgress: []
     });
-
-    useEffect(() => {
-        setMounted(true);
-        // Initialize PWA service
-        PWAService.initialize();
-        
-        const options: Intl.DateTimeFormatOptions = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        };
-        const now = new Date();
-        setCurrentDate(now.toLocaleDateString('en-US', options));
-
-        const hour = now.getHours();
-        if (hour < 12) setGreeting("Good Morning");
-        else if (hour < 18) setGreeting("Good Afternoon");
-        else setGreeting("Good Evening");
-
-        fetchRoutine();
-        fetchStats();
-        fetchUser();
-    }, []);
 
     const fetchUser = async () => {
         try {
@@ -82,6 +96,32 @@ export default function Dashboard() {
             console.error("Fetch error:", error);
         }
     };
+
+    useEffect(() => {
+        // Initialize PWA service
+        PWAService.initialize();
+        
+        // Set initial date and greeting
+        const options: Intl.DateTimeFormatOptions = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-US', options);
+        const hour = now.getHours();
+        const greetingText = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
+        
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentDate(dateStr);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setGreeting(greetingText);
+
+        fetchRoutine();
+        fetchStats();
+        fetchUser();
+    }, []);
 
     return (
         <div className="bg-background-light dark:bg-background-dark font-display text-[#333] dark:text-white min-h-screen flex flex-col">
@@ -205,7 +245,7 @@ export default function Dashboard() {
                                         </div>
                                     </div>
                                     <div className="flex items-end justify-between h-40 gap-2">
-                                        {stats.weeklyActivity.length > 0 ? stats.weeklyActivity.map((item: any) => (
+                                        {stats.weeklyActivity.length > 0 ? stats.weeklyActivity.map((item: WeeklyActivityItem) => (
                                             <div key={item.day} className="flex-1 flex flex-col items-center gap-2 group">
                                                 <div className="w-full flex flex-col justify-end h-full gap-1">
                                                     <div className="w-full bg-primary/30 rounded-t-sm transition-all group-hover:bg-primary/40" style={{ height: `${Math.min(item.focus * 20, 100)}%` }}></div>
@@ -237,7 +277,7 @@ export default function Dashboard() {
                                         <span className="size-2 bg-red-500 rounded-full animate-pulse"></span>
                                     </div>
                                     <div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-1 scrollbar-hide">
-                                        {stats.importantTasks && stats.importantTasks.length > 0 ? stats.importantTasks.map((item: any) => {
+                                        {stats.importantTasks && stats.importantTasks.length > 0 ? stats.importantTasks.map((item: ImportantTask) => {
 
                                             return (
                                                 <Link key={item.id} href={`/tasks/${item.id}`} className="bg-red-50 dark:bg-red-950/20 p-4 rounded-xl border border-red-100 dark:border-red-900/30 group cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors flex-shrink-0">
@@ -265,7 +305,7 @@ export default function Dashboard() {
                                     <h2 className="text-lg font-bold mb-5 text-[#333] dark:text-white">Learning Progress</h2>
                                     <div className="flex flex-col gap-5">
                                         {stats.learningProgress && stats.learningProgress.length > 0 ? (
-                                            stats.learningProgress.map((item: any) => (
+                                            stats.learningProgress.map((item: LearningProgressItem) => (
                                                 <div key={item.id}>
                                                     <div className="flex justify-between mb-2">
                                                         <span className="text-xs font-bold text-[#333] dark:text-gray-200 flex items-center gap-2">
