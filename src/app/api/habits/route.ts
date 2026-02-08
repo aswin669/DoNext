@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { AuthService } from "@/lib/auth-service";
-import { habitCreateSchema } from "@/lib/validation";
 
 export async function GET() {
     try {
@@ -9,13 +8,13 @@ export async function GET() {
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
         const habits = await prisma.habit.findMany({
             where: { userId: user.id },
-            include: {
-                completions: true,
-                streaks: true
-            }
+            include: { completions: true },
+            orderBy: { createdAt: "desc" }
         });
+
         return NextResponse.json(habits);
     } catch (error) {
         console.error("Habits GET Error:", error);
@@ -29,24 +28,31 @@ export async function POST(req: Request) {
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        const body = await req.json();
-        
-        // Validate request body
-        const validatedData = habitCreateSchema.parse(body);
 
-        const newHabit = await prisma.habit.create({
+        const body = await req.json();
+        const { name, icon, category, frequency, goalValue, goalUnit, reminderTime, motivation } = body;
+
+        if (!name || !category) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        const habit = await prisma.habit.create({
             data: {
-                ...validatedData,
+                name,
+                icon: icon || "🧘",
+                category,
+                frequency: frequency || "Daily",
+                goalValue: parseInt(goalValue) || 1,
+                goalUnit: goalUnit || "times",
+                reminderTime: reminderTime || "08:00",
+                motivation: motivation || "",
                 userId: user.id
             }
         });
 
-        return NextResponse.json(newHabit);
-    } catch (error: any) {
+        return NextResponse.json(habit, { status: 201 });
+    } catch (error) {
         console.error("Habit POST Error:", error);
-        if (error.name === 'ZodError') {
-            return NextResponse.json({ error: "Invalid habit data", details: error.errors }, { status: 400 });
-        }
         return NextResponse.json({ error: "Failed to create habit" }, { status: 500 });
     }
 }

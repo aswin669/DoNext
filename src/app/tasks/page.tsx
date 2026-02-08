@@ -68,6 +68,24 @@ export default function MyTasks() {
 
     const importantTasks = tasks.filter(t => t.category === "Important" || t.priority === "High");
     const otherTasks = tasks.filter(t => t.category !== "Important" && t.priority !== "High" && t.category !== "Study");
+    
+    // Group tasks by date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const todayTasks = tasks.filter(t => {
+        if (!t.date) return false;
+        const taskDate = new Date(t.date);
+        taskDate.setHours(0, 0, 0, 0);
+        return taskDate.getTime() === today.getTime();
+    });
+    
+    const previousDaysTasks = tasks.filter(t => {
+        if (!t.date) return false;
+        const taskDate = new Date(t.date);
+        taskDate.setHours(0, 0, 0, 0);
+        return taskDate.getTime() < today.getTime();
+    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     if (loading) {
         return (
@@ -224,6 +242,48 @@ export default function MyTasks() {
                                         )}
                                     </div>
                                 </div>
+
+                                {/* Previous Days Tasks */}
+                                {previousDaysTasks.length > 0 && (
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-slate-400">history</span>
+                                            <h2 className="text-lg font-bold">Previous Days</h2>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {previousDaysTasks.map((task) => {
+                                                const taskDate = new Date(task.date);
+                                                const dateStr = taskDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                                return (
+                                                    <div key={task.id} className="bg-white dark:bg-[#1A1A1A] p-4 rounded-2xl border border-slate-200 dark:border-[#222] shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                                                        <div className="flex items-center gap-4 flex-1">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={task.completed}
+                                                                onChange={() => toggleTask(task.id)}
+                                                                className="size-5 rounded border-slate-300 text-primary focus:ring-primary"
+                                                            />
+                                                            <div className="flex-1">
+                                                                <p className={`text-sm font-bold ${task.completed ? "line-through text-slate-400" : ""}`}>{task.title}</p>
+                                                                <div className="flex items-center gap-2 mt-1">
+                                                                    <span className="text-xs text-slate-400">{dateStr}</span>
+                                                                    {task.category && (
+                                                                        <span className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-300">
+                                                                            {task.category}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span className={`text-xs font-bold px-2 py-1 rounded ${task.completed ? "bg-emerald-100 text-emerald-600" : "bg-orange-100 text-orange-600"}`}>
+                                                            {task.completed ? "Done" : "Pending"}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Sidebar: Important & Critical Tasks */}
