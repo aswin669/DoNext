@@ -185,6 +185,7 @@ export class TradingService {
     /**
      * Get user's trades
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async getUserTrades(_userId: string, _filters?: {
         status?: string;
         symbol?: string;
@@ -236,6 +237,7 @@ export class TradingService {
     /**
      * Get trade performance summary
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async getPerformanceSummary(_userId: string, _period?: {
         startDate: Date;
         endDate: Date;
@@ -302,6 +304,7 @@ export class TradingService {
     /**
      * Get user's templates
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async getUserTemplates(_userId: string): Promise<Array<Record<string, unknown>>> {
         try {
             const templates: Array<Record<string, unknown>> = [];
@@ -402,6 +405,7 @@ export class TradingService {
     /**
      * Get trading calendar events
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async getCalendarEvents(_userId: string, _month: Date): Promise<Array<{ id: string; date: Date; type: string; title: string; time: string; importance?: string }>> {
         try {
             const events = [

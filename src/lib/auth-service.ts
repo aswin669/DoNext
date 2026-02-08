@@ -63,6 +63,7 @@ export class AuthService {
             if (!isValid) return null;
 
             // Return user without password
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { password: _, ...userWithoutPassword } = user;
             return userWithoutPassword as AuthUser;
         } catch (error) {
