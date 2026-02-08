@@ -330,6 +330,7 @@ async function getPendingTasks() {
 /**
  * Add pending task to IndexedDB
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function addPendingTask(task) {
   try {
     const db = await initializeDB();
@@ -396,6 +397,7 @@ async function getPendingHabits() {
 /**
  * Add pending habit to IndexedDB
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function addPendingHabit(habit) {
   try {
     const db = await initializeDB();
@@ -572,6 +574,7 @@ async function removePendingTask(taskId) {
 /**
  * Update pending task status
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function updatePendingTaskStatus(taskId, status) {
   try {
     const db = await initializeDB();
@@ -674,6 +677,7 @@ async function removePendingHabit(habitId) {
 /**
  * Update pending habit status
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function updatePendingHabitStatus(habitId, status) {
   try {
     const db = await initializeDB();

@@ -56,7 +56,7 @@ export default function ForgotPassword() {
                 body: JSON.stringify({ email })
             });
 
-            const data = await res.json();
+            await res.json();
 
             if (res.ok) {
                 // Generic success message (doesn't reveal if email exists)

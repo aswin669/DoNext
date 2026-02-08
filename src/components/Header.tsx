@@ -9,7 +9,6 @@ import { useTheme } from "./ThemeProvider";
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [profilePicture, setProfilePicture] = useState("");
-    const [mounted, setMounted] = useState(true);
     const menuRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { theme, setTheme } = useTheme();
@@ -89,7 +88,7 @@ export default function Header() {
                     className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-[#2A2A2A] rounded-lg transition-colors"
                     title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
                 >
-                    {mounted && theme === "dark" ? (
+                    {theme === "dark" ? (
                         <span className="material-symbols-outlined text-[24px]">light_mode</span>
                     ) : (
                         <span className="material-symbols-outlined text-[24px]">dark_mode</span>

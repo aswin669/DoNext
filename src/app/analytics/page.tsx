@@ -12,18 +12,10 @@ interface AnalyticsData {
     completionRate: number;
 }
 
-interface DayTask {
-    id: string;
-    title: string;
-    completed: boolean;
-    date: string;
-}
-
 export default function Analytics() {
     const [data, setData] = useState<AnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
-    const [dayTasks, setDayTasks] = useState<DayTask[]>([]);
 
     useEffect(() => {
         const fetchAnalytics = async () => {

@@ -50,7 +50,6 @@ export default function Dashboard() {
     const [greeting, setGreeting] = useState("Welcome");
     const [user, setUser] = useState<{ name: string } | null>(null);
     const [routine, setRoutine] = useState<RoutineItem[]>([]);
-    const [mounted, setMounted] = useState(true);
     const [stats, setStats] = useState<Stats>({
         tasksCompleted: 0,
         totalTasks: 0,
@@ -138,16 +137,14 @@ export default function Dashboard() {
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                                 <h1 className="text-2xl font-black tracking-tight">Welcome back, {user?.name?.split(' ')[0] || "there"}! 👋</h1>
-                                {mounted && <p className="text-slate-500 text-sm font-medium">Today is {currentDate || "Loading..."}</p>}
+                                <p className="text-slate-500 text-sm font-medium">Today is {currentDate || "Loading..."}</p>
                             </div>
-                            {mounted && (
-                                <div className="flex items-center gap-2 text-sm font-bold bg-white dark:bg-[#1A1A1A] px-4 py-2 rounded-xl border border-slate-200 dark:border-[#222] shadow-sm">
-                                    <span className="material-symbols-outlined text-primary text-[20px]">
-                                        {greeting === "Good Morning" ? "wb_sunny" : greeting === "Good Afternoon" ? "light_mode" : "nights_stay"}
-                                    </span>
-                                    <span>{greeting}</span>
-                                </div>
-                            )}
+                            <div className="flex items-center gap-2 text-sm font-bold bg-white dark:bg-[#1A1A1A] px-4 py-2 rounded-xl border border-slate-200 dark:border-[#222] shadow-sm">
+                                <span className="material-symbols-outlined text-primary text-[20px]">
+                                    {greeting === "Good Morning" ? "wb_sunny" : greeting === "Good Afternoon" ? "light_mode" : "nights_stay"}
+                                </span>
+                                <span>{greeting}</span>
+                            </div>
                         </div>
 
                         {/* Top Stats */}

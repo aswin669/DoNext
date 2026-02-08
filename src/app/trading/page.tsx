@@ -34,16 +34,9 @@ export default function TradingDashboard() {
         totalProfitLoss: 0,
         consistencyScore: 0
     });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchTradingData();
-    }, []);
 
     const fetchTradingData = async () => {
         try {
-            setLoading(true);
-            
             // Fetch daily plan
             const planRes = await fetch("/api/trading/daily-plan");
             if (planRes.ok) {
@@ -72,10 +65,13 @@ export default function TradingDashboard() {
             });
         } catch (error) {
             console.error("Error fetching trading data:", error);
-        } finally {
-            setLoading(false);
         }
     };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchTradingData();
+    }, []);
 
     return (
         <div className="bg-background-light dark:bg-background-dark font-display text-[#333] dark:text-white min-h-screen flex flex-col">
