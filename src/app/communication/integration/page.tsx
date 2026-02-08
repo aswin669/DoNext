@@ -561,7 +561,7 @@ export default function CommunicationIntegrationPage() {
                                             <input
                                                 type="checkbox"
                                                 id={key}
-                                                checked={connectFormData.preferences[key as keyof typeof connectFormData.preferences]}
+                                                checked={Boolean(connectFormData.preferences[key as keyof typeof connectFormData.preferences])}
                                                 onChange={(e) => setConnectFormData({
                                                     ...connectFormData,
                                                     preferences: {
