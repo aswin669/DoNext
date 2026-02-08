@@ -7,21 +7,9 @@ import { useEffect, useState } from "react";
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
     { label: "My Tasks", href: "/tasks", icon: "assignment" },
-    { label: "Eisenhower Matrix", href: "/tasks/eisenhower", icon: "grid_view" },
     { label: "Daily Routine", href: "/routine", icon: "schedule" },
     { label: "Habits", href: "/habits", icon: "calendar_today" },
-    { label: "Habit Gamification", href: "/habits/gamification", icon: "workspace_premium" },
-    { label: "Pomodoro Timer", href: "/focus/pomodoro", icon: "timer" },
-    { label: "Time Blocking", href: "/focus/time-blocking", icon: "calendar_month" },
-    { label: "Productivity Insights", href: "/insights/productivity", icon: "auto_awesome" },
-    { label: "SMART Goals", href: "/goals/smart", icon: "flag" },
-    { label: "Team Collaboration", href: "/teams/collaboration", icon: "groups" },
-    { label: "Accountability Partners", href: "/accountability/partners", icon: "handshake" },
     { label: "Trading", href: "/trading", icon: "trending_up" },
-    { label: "Advanced Analytics", href: "/analytics/advanced", icon: "analytics" },
-    { label: "Predictive Analytics", href: "/analytics/predictive", icon: "show_chart" },
-    { label: "Calendar Integration", href: "/calendar/integration", icon: "calendar_month" },
-    { label: "Communication Integration", href: "/communication/integration", icon: "notifications" },
     { label: "Analytics", href: "/analytics", icon: "monitoring" },
 ];
 

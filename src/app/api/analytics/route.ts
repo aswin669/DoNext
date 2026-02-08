@@ -50,7 +50,6 @@ export async function GET() {
         });
 
         // 3. Habit Stats
-        // @ts-expect-error - prisma types may not be fully generated
         const habitData = await prisma.habit.findMany({
             where: { userId: user.id },
             include: { completions: true }

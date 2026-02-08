@@ -124,7 +124,7 @@ export async function validateRequestBody<T>(req: Request, schema: any): Promise
         return schema.parse(body);
     } catch (error: any) {
         if (error.name === 'ZodError') {
-            throw new ValidationError(`Invalid request body: ${error.errors.map((e: any) => e.message).join(', ')}`);
+            throw new ValidationError(`Invalid request body: ${error.issues.map((e: any) => e.message).join(', ')}`);
         }
         throw new ValidationError('Invalid JSON in request body');
     }

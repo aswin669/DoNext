@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Productivity Master - Task & Habit Tracker",
-  description: "Advanced productivity app with AI-powered task management, habit tracking, and team collaboration",
+  description: "Personal productivity app with task management, habit tracking, and daily routines",
   manifest: "/manifest.json",
 };
 

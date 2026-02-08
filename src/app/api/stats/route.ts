@@ -75,36 +75,9 @@ export async function GET() {
         }));
 
         // 4. Focus Time Today
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
         const todayActivity = weeklyActivity[6];
         
-        // 4b. Enhanced Focus Time Calculation from Pomodoro Sessions
-        try {
-            // @ts-expect-error - prisma types may not be fully generated
-            const pomodoroSessions = await prisma.pomodoroSession.findMany({
-                where: {
-                    userId: user.id,
-                    completedAt: {
-                        gte: today
-                    }
-                }
-            });
-            
-            const pomodoroFocusMinutes = pomodoroSessions.reduce((sum: number, session: any) => {
-                return sum + (session.duration || 25); // Default 25 mins per session
-            }, 0);
-            
-            // Combine task/habit focus time with pomodoro focus time
-            const totalFocusMinutes = (todayActivity.focus * 60) + pomodoroFocusMinutes;
-            todayActivity.focus = totalFocusMinutes / 60; // Convert back to hours
-        } catch (error) {
-            // If pomodoro table doesn't exist, use calculated focus time
-            console.log("Pomodoro sessions not available, using calculated focus time");
-        }
-
         // 5. Critical Tasks (High Priority + Important Category)
-        // @ts-expect-error - prisma types may not be fully generated
         const importantTasks = await prisma.task.findMany({
             where: {
                 userId: user.id,
@@ -119,13 +92,11 @@ export async function GET() {
         });
 
         // 6. Learning Progress (Study Habits & Tasks)
-        // @ts-expect-error - prisma types may not be fully generated
         const studyHabits = await prisma.habit.findMany({
             where: { userId: user.id, category: "Study" },
             include: { completions: true }
         });
 
-        // @ts-expect-error - prisma types may not be fully generated
         const studyTasks = await prisma.task.findMany({
             where: { userId: user.id, category: "Study" }
         });
@@ -153,22 +124,9 @@ export async function GET() {
 
         // 7. Study Task Schema Extension
         // Process Study Tasks with enhanced metrics
-        // Schema includes: title, description, subject, difficulty, estimatedTime, actualTime, completed
         if (studyTasks.length > 0) {
             const completedStudyTasks = studyTasks.filter((t: any) => t.completed).length;
             const progress = Math.round((completedStudyTasks / studyTasks.length) * 100);
-            
-            // Calculate average study time
-            const totalEstimatedTime = studyTasks.reduce((sum: number, t: any) => sum + (t.estimatedTime || 0), 0);
-            const totalActualTime = studyTasks.reduce((sum: number, t: any) => sum + (t.actualTime || 0), 0);
-            const avgTimePerTask = studyTasks.length > 0 ? Math.round(totalActualTime / studyTasks.length) : 0;
-            
-            // Categorize by difficulty if available
-            const difficultyBreakdown = {
-                easy: studyTasks.filter((t: any) => t.type === 'easy').length,
-                medium: studyTasks.filter((t: any) => t.type === 'medium').length,
-                hard: studyTasks.filter((t: any) => t.type === 'hard').length
-            };
             
             learningProgress.push({
                 id: 'study-tasks-aggregate',
@@ -178,19 +136,9 @@ export async function GET() {
                 icon: 'school',
                 metrics: {
                     totalTasks: studyTasks.length,
-                    completedTasks: completedStudyTasks,
-                    estimatedTotalTime: totalEstimatedTime,
-                    actualTotalTime: totalActualTime,
-                    averageTimePerTask: avgTimePerTask,
-                    difficultyBreakdown
+                    completedTasks: completedStudyTasks
                 }
             });
-        }
-
-        // If no data, return empty array (UI will show "Add Goal" prompt)
-        if (learningProgress.length === 0) {
-            // Return empty array to show "Add Goal" prompt in UI
-            // This is better UX than showing fake data
         }
 
         return NextResponse.json({

@@ -8,67 +8,49 @@ datasource db {
 }
 
 model User {
-  id                         String                      @id @default(cuid())
-  email                      String                      @unique
-  name                       String?
-  password                   String
-  profilePicture             String?
-  createdAt                  DateTime                    @default(now())
-  updatedAt                  DateTime                    @updatedAt
-  theme                      String                      @default("light")
-  notifEmail                 Boolean                     @default(true)
-  notifPush                  Boolean                     @default(true)
-  defaultView                String                      @default("Dashboard Overview")
-  resetToken                 String?
-  resetTokenExpiry           DateTime?
-  partnerPartnerships        AccountabilityPartnership[] @relation("PartnerPartnerships")
-  accountabilityPartnerships AccountabilityPartnership[] @relation("UserPartnerships")
-  accountabilityRequests     AccountabilityRequest[]     @relation("UserRequests")
-  sentPartnershipRequests    AccountabilityRequest[]     @relation("SenderRequests")
-  achievements               Achievement[]
-  analyticsData              AnalyticsData[]
-  calendarConnections        CalendarConnection[]
-  calendarEvents             CalendarEvent[]
-  communicationConnections   CommunicationConnection[]
-  customReports              CustomReport[]
-  dashboardWidgets           DashboardWidget[]
-  goals                      Goal[]
-  habits                     Habit[]
-  notifications              Notification[]
-  assignedTasks              ProjectTask[]               @relation("AssignedProjectTasks")
-  routineSteps               RoutineStep[]
-  tasks                      Task[]
-  ownedTeams                 Team[]                      @relation("TeamOwner")
-  teamMemberships            TeamMembership[]
-  trades                     Trade[]
-  pomodoroSessions           PomodoroSession[]
+  id               String            @id @default(cuid())
+  email            String            @unique
+  name             String?
+  password         String
+  profilePicture   String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  theme            String            @default("light")
+  notifEmail       Boolean           @default(true)
+  notifPush        Boolean           @default(true)
+  defaultView      String            @default("Dashboard Overview")
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  habits           Habit[]
+  notifications    Notification[]
+  routineSteps     RoutineStep[]
+  tasks            Task[]
+  trades           Trade[]
 }
 
 model Task {
-  id             String           @id @default(cuid())
-  title          String
-  description    String?
-  completed      Boolean          @default(false)
-  priority       String           @default("Medium")
-  smartPriority  Float?
-  category       String?
-  type           String?
-  date           DateTime?
-  time           String?
-  location       String?
-  estimatedTime  Int?
-  actualTime     Int?
-  deadline       DateTime?
-  userId         String
-  parentTaskId   String?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  calendarEvents CalendarEvent[]
-  parentTask     Task?            @relation("TaskSubtasks", fields: [parentTaskId], references: [id])
-  subtasks       Task[]           @relation("TaskSubtasks")
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dependents     TaskDependency[] @relation("DependencyTask")
-  dependencies   TaskDependency[] @relation("DependentTask")
+  id            String           @id @default(cuid())
+  title         String
+  description   String?
+  completed     Boolean          @default(false)
+  priority      String           @default("Medium")
+  category      String?
+  type          String?
+  date          DateTime?
+  time          String?
+  location      String?
+  estimatedTime Int?
+  actualTime    Int?
+  deadline      DateTime?
+  userId        String
+  parentTaskId  String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  parentTask    Task?            @relation("TaskSubtasks", fields: [parentTaskId], references: [id])
+  subtasks      Task[]           @relation("TaskSubtasks")
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dependents    TaskDependency[] @relation("DependencyTask")
+  dependencies  TaskDependency[] @relation("DependentTask")
 }
 
 model Habit {
@@ -86,7 +68,6 @@ model Habit {
   updatedAt    DateTime          @updatedAt
   user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   completions  HabitCompletion[]
-  streaks      HabitStreak[]
 }
 
 model HabitCompletion {
@@ -141,265 +122,11 @@ model TaskDependency {
   @@unique([dependencyId, dependentId])
 }
 
-model Achievement {
-  id          String   @id @default(cuid())
-  userId      String
-  type        String
-  name        String
-  description String
-  icon        String
-  earnedAt    DateTime @default(now())
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Goal {
-  id           String          @id @default(cuid())
-  userId       String
-  title        String
-  description  String?
-  specific     String?
-  measurable   String?
-  achievable   Boolean         @default(true)
-  relevant     String?
-  timeBound    DateTime?
-  targetValue  Float?
-  currentValue Float?
-  unit         String?
-  category     String?
-  priority     String          @default("Medium")
-  status       String          @default("Active")
-  progress     Float           @default(0)
-  startDate    DateTime        @default(now())
-  deadline     DateTime?
-  completedAt  DateTime?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  milestones   GoalMilestone[]
-}
-
-model HabitStreak {
-  id        String    @id @default(cuid())
-  habitId   String
-  startDate DateTime
-  endDate   DateTime?
-  length    Int       @default(0)
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  habit     Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
-}
-
-model GoalMilestone {
-  id           String    @id @default(cuid())
-  goalId       String
-  title        String
-  description  String?
-  targetValue  Float
-  currentValue Float     @default(0)
-  deadline     DateTime?
-  completed    Boolean   @default(false)
-  completedAt  DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  goal         Goal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
-}
-
-model Team {
-  id          String           @id @default(cuid())
-  name        String
-  description String?
-  ownerId     String
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  projects    Project[]
-  owner       User             @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  members     TeamMembership[]
-  invitations TeamInvitation[]
-}
-
-model TeamMembership {
-  id        String   @id @default(cuid())
-  userId    String
-  teamId    String
-  role      String   @default("Member")
-  joinedAt  DateTime @default(now())
-  createdAt DateTime @default(now())
-  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, teamId])
-}
-
-model Project {
-  id          String        @id @default(cuid())
-  teamId      String
-  name        String
-  description String?
-  status      String        @default("Active")
-  startDate   DateTime      @default(now())
-  endDate     DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  team        Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  tasks       ProjectTask[]
-}
-
-model ProjectTask {
-  id           String    @id @default(cuid())
-  projectId    String
-  title        String
-  description  String?
-  assignedTo   String?
-  status       String    @default("Todo")
-  priority     String    @default("Medium")
-  dueDate      DateTime?
-  completedAt  DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  assignedUser User?     @relation("AssignedProjectTasks", fields: [assignedTo], references: [id])
-  project      Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model AccountabilityPartnership {
-  id               String    @id @default(cuid())
-  userId           String
-  partnerId        String
-  status           String    @default("Active")
-  startDate        DateTime  @default(now())
-  endDate          DateTime?
-  sharedGoals      String?
-  checkInFrequency String    @default("Weekly")
-  lastCheckIn      DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  partner          User      @relation("PartnerPartnerships", fields: [partnerId], references: [id], onDelete: Cascade)
-  user             User      @relation("UserPartnerships", fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, partnerId])
-}
-
-model AccountabilityRequest {
-  id          String    @id @default(cuid())
-  senderId    String
-  recipientId String
-  message     String?
-  status      String    @default("Pending")
-  sentAt      DateTime  @default(now())
-  respondedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  recipient   User      @relation("UserRequests", fields: [recipientId], references: [id], onDelete: Cascade)
-  sender      User      @relation("SenderRequests", fields: [senderId], references: [id], onDelete: Cascade)
-}
-
-model DashboardWidget {
-  id        String   @id @default(cuid())
-  userId    String
-  type      String
-  title     String
-  config    String
-  position  Int
-  size      String   @default("medium")
-  isVisible Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model CustomReport {
-  id          String    @id @default(cuid())
-  userId      String
-  name        String
-  description String?
-  type        String
-  config      String
-  data        String?
-  lastRun     DateTime?
-  schedule    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model AnalyticsData {
-  id        String   @id @default(cuid())
-  userId    String
-  dataType  String
-  date      DateTime
-  data      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, dataType, date])
-}
-
-model CalendarConnection {
-  id           String          @id @default(cuid())
-  userId       String
-  provider     String
-  calendarId   String
-  accessToken  String?
-  refreshToken String?
-  tokenExpiry  DateTime?
-  syncEnabled  Boolean         @default(true)
-  lastSync     DateTime?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  events       CalendarEvent[]
-
-  @@unique([userId, provider])
-}
-
-model CalendarEvent {
-  id          String              @id @default(cuid())
-  userId      String
-  calendarId  String?
-  externalId  String?
-  title       String
-  description String?
-  start       DateTime
-  end         DateTime
-  location    String?
-  attendees   String?
-  eventType   String              @default("Task")
-  taskId      String?
-  isAllDay    Boolean             @default(false)
-  reminders   String?
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  calendar    CalendarConnection? @relation(fields: [calendarId], references: [id])
-  task        Task?               @relation(fields: [taskId], references: [id])
-  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model CommunicationConnection {
-  id           String    @id @default(cuid())
-  userId       String
-  platform     String
-  connectionId String
-  accessToken  String?
-  refreshToken String?
-  tokenExpiry  DateTime?
-  webhookUrl   String?
-  channelId    String?
-  email        String?
-  enabled      Boolean   @default(true)
-  preferences  String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, platform])
-}
-
 model Trade {
   id                String    @id @default(cuid())
   userId            String
   symbol            String
-  tradeType         String    // Long or Short
+  tradeType         String // Long or Short
   entryPrice        Float
   stopLoss          Float
   target            Float
@@ -416,10 +143,10 @@ model Trade {
   exitPrice         Float?
   profitLoss        Float?
   profitLossPercent Float?
-  entryImage        String?   // URL to entry screenshot
-  exitImage         String?   // URL to exit screenshot
-  journalEntry      String?   // Trade journal notes
-  emotion           String?   // Confident, Anxious, Neutral, Frustrated
+  entryImage        String? // URL to entry screenshot
+  exitImage         String? // URL to exit screenshot
+  journalEntry      String? // Trade journal notes
+  emotion           String? // Confident, Anxious, Neutral, Frustrated
   mistakes          String?
   lessons           String?
   improvements      String?
@@ -429,39 +156,4 @@ model Trade {
 
   @@index([userId])
   @@index([status])
-}
-
-model PomodoroSession {
-  id          String   @id @default(cuid())
-  userId      String
-  taskId      String?
-  duration    Int      @default(25) // in minutes
-  startedAt   DateTime @default(now())
-  completedAt DateTime?
-  paused      Boolean  @default(false)
-  pausedAt    DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([completedAt])
-}
-
-model TeamInvitation {
-  id          String   @id @default(cuid())
-  teamId      String
-  inviteeEmail String
-  invitedBy   String
-  role        String   @default("Member")
-  status      String   @default("Pending") // Pending, Accepted, Rejected
-  expiryDate  DateTime
-  acceptedAt  DateTime?
-  rejectedAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-
-  @@index([teamId])
-  @@index([inviteeEmail])
 }

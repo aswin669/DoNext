@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { AuthService } from "@/lib/auth-service";
 import { validateRequestBody, createErrorResponse, createSuccessResponse } from "@/lib/errors";
 import { loginSchema, LoginInput } from "@/lib/validation";
+import { AuthenticationError } from "@/types";
 
 export async function POST(req: Request) {
     try {
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
         // Authenticate user using secure service
         const user = await AuthService.authenticateUser(email, password);
         if (!user) {
-            return createErrorResponse(new Error("Invalid credentials"), 401);
+            throw new AuthenticationError("Invalid email or password");
         }
 
         // Create secure session
