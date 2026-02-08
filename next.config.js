@@ -124,9 +124,9 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Next.js 15 features
+  // Disable React Compiler for now - babel plugin not available
   experimental: {
-    reactCompiler: true,
+    // reactCompiler: true,
   },
   // Add turbopack configuration to silence the warning
   turbopack: {},
