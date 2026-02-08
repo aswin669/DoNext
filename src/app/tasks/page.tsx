@@ -16,6 +16,8 @@ interface Task {
     date: string;
     time: string;
     location: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export default function MyTasks() {
@@ -33,12 +35,24 @@ export default function MyTasks() {
         if (selectedDate) {
             const selected = new Date(selectedDate);
             selected.setHours(0, 0, 0, 0);
+            const nextDay = new Date(selected);
+            nextDay.setDate(nextDay.getDate() + 1);
             
             const tasksForDate = tasks.filter(t => {
-                if (!t.date) return false;
-                const taskDate = new Date(t.date);
-                taskDate.setHours(0, 0, 0, 0);
-                return taskDate.getTime() === selected.getTime();
+                // Check if task was created on this day
+                const createdDate = new Date(t.createdAt);
+                createdDate.setHours(0, 0, 0, 0);
+                const createdOnDay = createdDate.getTime() === selected.getTime();
+                
+                // Check if task has a date set for this day
+                const hasDateOnDay = t.date && new Date(t.date).toISOString().split('T')[0] === selected.toISOString().split('T')[0];
+                
+                // Check if task was completed on this day
+                const completedDate = new Date(t.updatedAt || t.createdAt);
+                completedDate.setHours(0, 0, 0, 0);
+                const completedOnDay = t.completed && completedDate.getTime() === selected.getTime();
+                
+                return createdOnDay || hasDateOnDay || completedOnDay;
             });
             
             setSelectedDateTasks(tasksForDate);
@@ -138,125 +152,75 @@ export default function MyTasks() {
 
                         {/* Calendar Picker */}
                         <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-[#E0E0E0] dark:border-[#222] shadow-sm p-6">
-                            {/* Header with Month and Navigation */}
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
-                                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                                </h3>
-                                <div className="flex gap-2">
-                                    <button className="p-2 bg-primary text-white rounded-lg hover:brightness-110 transition-all">
-                                        <span className="material-symbols-outlined text-xl">chevron_left</span>
+                                <h3 className="text-lg font-bold">Select Date</h3>
+                                {selectedDate && (
+                                    <button
+                                        onClick={() => setSelectedDate(null)}
+                                        className="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-semibold"
+                                    >
+                                        Clear
                                     </button>
-                                    <button className="p-2 bg-primary text-white rounded-lg hover:brightness-110 transition-all">
-                                        <span className="material-symbols-outlined text-xl">chevron_right</span>
-                                    </button>
-                                </div>
+                                )}
                             </div>
                             
-                            {/* Calendar Grid */}
-                            <div className="max-w-md mx-auto">
-                                {/* Day Headers */}
-                                <div className="grid grid-cols-7 gap-2 mb-4">
-                                    {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(day => (
-                                        <div key={day} className="text-center text-sm font-bold text-slate-700 dark:text-slate-300 py-2">
-                                            {day}
-                                        </div>
-                                    ))}
-                                </div>
-                                
-                                {/* Calendar Days */}
-                                <div className="grid grid-cols-7 gap-2">
-                                    {(() => {
-                                        const now = new Date();
-                                        const year = now.getFullYear();
-                                        const month = now.getMonth();
-                                        const firstDay = new Date(year, month, 1);
-                                        const lastDay = new Date(year, month + 1, 0);
-                                        const daysInMonth = lastDay.getDate();
-                                        const startingDayOfWeek = (firstDay.getDay() + 6) % 7; // Adjust to Monday start
-                                        
-                                        const days = [];
-                                        
-                                        // Empty cells for days before month starts
-                                        for (let i = 0; i < startingDayOfWeek; i++) {
-                                            days.push(<div key={`empty-${i}`}></div>);
-                                        }
-                                        
-                                        // Days of the month
-                                        for (let day = 1; day <= daysInMonth; day++) {
-                                            const date = new Date(year, month, day);
-                                            const isSelected = selectedDate && 
-                                                selectedDate.getDate() === day &&
-                                                selectedDate.getMonth() === month &&
-                                                selectedDate.getFullYear() === year;
-                                            const isToday = new Date().getDate() === day && 
-                                                new Date().getMonth() === month &&
-                                                new Date().getFullYear() === year;
-                                            
-                                            const dayTasks = tasks.filter(t => {
-                                                if (!t.date) return false;
-                                                const taskDate = new Date(t.date);
-                                                return taskDate.getDate() === day && 
-                                                       taskDate.getMonth() === month &&
-                                                       taskDate.getFullYear() === year;
-                                            });
-                                            
-                                            const hasCompleted = dayTasks.some(t => t.completed);
-                                            const hasIncomplete = dayTasks.some(t => !t.completed);
-                                            
-                                            days.push(
-                                                <button
-                                                    key={day}
-                                                    onClick={() => setSelectedDate(date)}
-                                                    className={`p-3 rounded-lg text-sm font-semibold transition-all relative flex items-center justify-center h-12 ${
-                                                        isSelected
-                                                            ? 'bg-primary text-white shadow-md' 
-                                                            : isToday
-                                                            ? 'bg-slate-100 dark:bg-[#2A2A2A] text-slate-800 dark:text-white'
-                                                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#222]'
-                                                    }`}
-                                                >
-                                                    <div className="flex flex-col items-center">
-                                                        <span>{day}</span>
-                                                        {dayTasks.length > 0 && (
-                                                            <div className="flex gap-0.5 mt-0.5">
-                                                                {hasCompleted && <div className="w-1 h-1 rounded-full bg-emerald-500"></div>}
-                                                                {hasIncomplete && <div className="w-1 h-1 rounded-full bg-primary"></div>}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </button>
-                                            );
-                                        }
-                                        
-                                        return days;
-                                    })()}
-                                </div>
-                            </div>
+                            <input
+                                type="date"
+                                value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+                                onChange={(e) => {
+                                    if (e.target.value) {
+                                        setSelectedDate(new Date(e.target.value + 'T00:00:00'));
+                                    } else {
+                                        setSelectedDate(null);
+                                    }
+                                }}
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-[#333] bg-white dark:bg-[#1A1A1A] dark:text-white focus:border-primary focus:ring-primary text-lg"
+                            />
                             
                             {/* Selected Date Tasks */}
                             {selectedDate && (
                                 <div className="mt-6 pt-6 border-t border-slate-100 dark:border-[#222]">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h4 className="font-bold text-lg">
-                                            {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                                        </h4>
-                                        <button
-                                            onClick={() => setSelectedDate(null)}
-                                            className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-semibold"
-                                        >
-                                            Clear
-                                        </button>
-                                    </div>
+                                    <h4 className="font-bold text-lg mb-4">
+                                        {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                                    </h4>
                                     
-                                    {selectedDateTasks.length > 0 ? (
+                                    {selectedDateTasks.length > 0 || routine.length > 0 ? (
                                         <div className="space-y-3">
+                                            {/* Routine Section */}
+                                            {routine.length > 0 && (
+                                                <div>
+                                                    <h5 className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-2 uppercase tracking-wider flex items-center gap-2">
+                                                        <span className="material-symbols-outlined text-sm">schedule</span>
+                                                        Daily Routine
+                                                    </h5>
+                                                    <div className="space-y-2">
+                                                        {routine.map((item: any) => (
+                                                            <div key={item.id} className={`flex items-center gap-2 p-2 rounded-lg border ${
+                                                                item.completed
+                                                                    ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-900/30'
+                                                                    : 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-900/30'
+                                                            }`}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={item.completed}
+                                                                    onChange={() => toggleTask(item.id, true)}
+                                                                    className="w-4 h-4 rounded border-blue-300 text-primary cursor-pointer"
+                                                                />
+                                                                <span className="text-lg">{item.icon}</span>
+                                                                <p className={`text-sm font-semibold truncate flex-1 ${item.completed ? 'line-through text-slate-500' : 'text-slate-700 dark:text-slate-300'}`}>{item.task}</p>
+                                                                <span className="text-xs text-slate-400">{item.time}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
                                             {/* Completed Tasks */}
                                             {selectedDateTasks.filter(t => t.completed).length > 0 && (
                                                 <div>
                                                     <h5 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-2 uppercase tracking-wider flex items-center gap-2">
                                                         <span className="material-symbols-outlined text-sm">check_circle</span>
-                                                        Completed ({selectedDateTasks.filter(t => t.completed).length})
+                                                        Completed Tasks ({selectedDateTasks.filter(t => t.completed).length})
                                                     </h5>
                                                     <div className="space-y-2">
                                                         {selectedDateTasks.filter(t => t.completed).map(task => (
@@ -274,7 +238,7 @@ export default function MyTasks() {
                                                 <div>
                                                     <h5 className="text-xs font-bold text-primary dark:text-primary mb-2 uppercase tracking-wider flex items-center gap-2">
                                                         <span className="material-symbols-outlined text-sm">radio_button_unchecked</span>
-                                                        Pending ({selectedDateTasks.filter(t => !t.completed).length})
+                                                        Pending Tasks ({selectedDateTasks.filter(t => !t.completed).length})
                                                     </h5>
                                                     <div className="space-y-2">
                                                         {selectedDateTasks.filter(t => !t.completed).map(task => (
@@ -302,7 +266,7 @@ export default function MyTasks() {
                                     ) : (
                                         <div className="text-center py-8 text-slate-400">
                                             <span className="material-symbols-outlined text-4xl block mb-2 opacity-50">task_alt</span>
-                                            <p className="text-sm">No tasks for this date</p>
+                                            <p className="text-sm">No tasks or routine for this date</p>
                                         </div>
                                     )}
                                 </div>
