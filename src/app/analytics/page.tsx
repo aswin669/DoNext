@@ -8,6 +8,8 @@ import Header from "@/components/Header";
 export default function Analytics() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedDay, setSelectedDay] = useState<number | null>(null);
+    const [dayTasks, setDayTasks] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchAnalytics = async () => {
@@ -25,6 +27,26 @@ export default function Analytics() {
         };
         fetchAnalytics();
     }, []);
+
+    const handleDayClick = async (dayIndex: number) => {
+        setSelectedDay(dayIndex);
+        try {
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - (6 - dayIndex));
+            startDate.setHours(0, 0, 0, 0);
+
+            const endDate = new Date(startDate);
+            endDate.setHours(23, 59, 59, 999);
+
+            const res = await fetch(`/api/tasks/by-date?start=${startDate.toISOString()}&end=${endDate.toISOString()}`);
+            if (res.ok) {
+                const tasks = await res.json();
+                setDayTasks(tasks);
+            }
+        } catch (error) {
+            console.error("Error fetching day tasks:", error);
+        }
+    };
 
     if (loading) {
         return (
@@ -121,17 +143,29 @@ export default function Analytics() {
                                     </h3>
                                     <div className="relative h-24 flex items-end gap-2 px-1">
                                         {(data?.weeklyTrend || [60, 75, 95, 80, 40, 85, 90]).map((height: number, i: number) => (
-                                            <div key={i} className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-t h-full relative group">
+                                            <button
+                                                key={i}
+                                                onClick={() => handleDayClick(i)}
+                                                className={`flex-1 rounded-t h-full relative group transition-all cursor-pointer ${
+                                                    selectedDay === i 
+                                                        ? "bg-primary/20" 
+                                                        : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                                }`}
+                                            >
                                                 <div
-                                                    className="absolute bottom-0 left-0 right-0 bg-primary/30 rounded-t transition-all group-hover:bg-primary"
+                                                    className={`absolute bottom-0 left-0 right-0 rounded-t transition-all ${
+                                                        selectedDay === i
+                                                            ? "bg-primary"
+                                                            : "bg-primary/30 group-hover:bg-primary"
+                                                    }`}
                                                     style={{ height: `${height}%` }}
                                                 ></div>
                                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-slate-800 text-white text-[10px] px-1.5 py-0.5 rounded z-10">{height}%</div>
-                                            </div>
+                                            </button>
                                         ))}
                                     </div>
                                     <div className="flex justify-between mt-2 text-[10px] text-slate-400">
-                                        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                                        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
                                     </div>
                                 </div>
                             </div>

@@ -3,14 +3,23 @@ import prisma from "@/lib/prisma";
 import { AuthService } from "@/lib/auth-service";
 import { taskCreateSchema } from "@/lib/validation";
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
         const user = await AuthService.getCurrentUser();
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
+        const { searchParams } = new URL(req.url);
+        const completed = searchParams.get("completed");
+
+        const where: any = { userId: user.id };
+        if (completed !== null) {
+            where.completed = completed === "true";
+        }
+
         const tasks = await prisma.task.findMany({
-            where: { userId: user.id },
+            where,
             orderBy: { createdAt: "desc" }
         });
         return NextResponse.json(tasks);

@@ -151,8 +151,9 @@ export async function GET() {
             previousDate = currentDate;
         });
 
-        // 6. Weekly Trend - completion percentage for last 7 days (based on updatedAt)
+        // 6. Weekly Trend - activity level for last 7 days (count of completed tasks per day)
         const weeklyTrend = [];
+        const maxCompletedInDay = Math.max(...Object.values(intensityData), 1); // For scaling
 
         for (let i = 6; i >= 0; i--) {
             const startOfDay = new Date();
@@ -174,20 +175,8 @@ export async function GET() {
                 }
             });
 
-            // Get all tasks created before or on this day
-            const allTasksUpToDay = await prisma.task.findMany({
-                where: {
-                    userId: user.id,
-                    createdAt: {
-                        lte: endOfDay
-                    }
-                }
-            });
-
-            const dayPercentage = allTasksUpToDay.length > 0 
-                ? Math.round((dayCompletedTasks.length / allTasksUpToDay.length) * 100) 
-                : 0;
-
+            // Calculate percentage based on max completed in any day
+            const dayPercentage = Math.round((dayCompletedTasks.length / maxCompletedInDay) * 100);
             weeklyTrend.push(dayPercentage);
         }
 
