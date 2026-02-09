@@ -11,14 +11,14 @@ export default function OfflinePage() {
         try {
             // Check IndexedDB for pending actions
             if ('indexedDB' in window) {
-                const db = await new Promise((resolve, reject) => {
+                const db = await new Promise<IDBDatabase>((resolve, reject) => {
                     const request = indexedDB.open('DoNextDB', 1);
                     request.onerror = () => reject(request.error);
                     request.onsuccess = () => resolve(request.result);
                 });
 
                 // Get pending tasks
-                const pendingTasks = await new Promise((resolve, reject) => {
+                const pendingTasks = await new Promise<unknown[]>((resolve, reject) => {
                     const transaction = db.transaction(['pendingTasks'], 'readonly');
                     const store = transaction.objectStore('pendingTasks');
                     const index = store.index('status');
@@ -29,7 +29,7 @@ export default function OfflinePage() {
                 });
 
                 // Get pending habits
-                const pendingHabits = await new Promise((resolve, reject) => {
+                const pendingHabits = await new Promise<unknown[]>((resolve, reject) => {
                     const transaction = db.transaction(['pendingHabits'], 'readonly');
                     const store = transaction.objectStore('pendingHabits');
                     const index = store.index('status');
@@ -60,8 +60,9 @@ export default function OfflinePage() {
             // Trigger background sync
             if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
                 const registration = await navigator.serviceWorker.ready;
-                await registration.sync.register('sync-tasks');
-                await registration.sync.register('sync-habits');
+                const syncReg = registration as unknown as { sync: { register: (tag: string) => Promise<void> } };
+                await syncReg.sync.register('sync-tasks');
+                await syncReg.sync.register('sync-habits');
                 
                 // Clear pending actions after sync request
                 localStorage.removeItem('pendingTasks');

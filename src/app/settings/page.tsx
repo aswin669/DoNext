@@ -34,8 +34,6 @@ export default function Settings() {
                 }
             } catch (error) {
                 console.error("Fetch settings error:", error);
-            } finally {
-                setLoading(false);
             }
         };
         fetchSettings();

@@ -114,7 +114,6 @@ export default function Dashboard() {
         
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentDate(dateStr);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setGreeting(greetingText);
 
         fetchRoutine();

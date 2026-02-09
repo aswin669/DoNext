@@ -8,14 +8,26 @@ import Header from "@/components/Header";
 interface Trade {
     id: string;
     symbol: string;
-    status: 'Active' | 'Completed';
+    status: 'Planned' | 'Executed' | 'Completed' | 'Cancelled';
     profitLoss?: number;
+    tradeType: string;
+    entryPrice: number;
+    stopLoss: number;
+    target: number;
+    riskRewardRatio: number;
+    exitPrice?: number;
+    quantity?: number;
 }
 
 interface DailyPlan {
     id: string;
     date: string;
     plan: string;
+    marketBias?: string;
+    maxRisk?: number;
+    maxRiskPercent?: number;
+    accountSize?: number;
+    goals?: string;
 }
 
 interface Stats {
@@ -192,7 +204,7 @@ export default function TradingDashboard() {
                                                             {trade.status}
                                                         </span>
                                                     </td>
-                                                    <td className={`py-3 px-4 font-bold ${trade.profitLoss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                                                    <td className={`py-3 px-4 font-bold ${(trade.profitLoss || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                                                         ${(trade.profitLoss || 0).toFixed(2)}
                                                     </td>
                                                 </tr>

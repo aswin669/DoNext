@@ -293,7 +293,6 @@ export default function MyTasks() {
                                                             </td>
                                                             <td className="px-4 py-4">
                                                                 <div className={`flex items-center gap-3 ${item.completed ? "opacity-50" : ""}`}>
-                                                                    <span className="text-lg">{item.icon}</span>
                                                                     <div className="flex flex-col">
                                                                         <span className={`font-bold text-sm ${item.completed ? "line-through" : ""}`}>{item.task}</span>
                                                                         <span className="text-[11px] text-slate-400">{item.time}</span>

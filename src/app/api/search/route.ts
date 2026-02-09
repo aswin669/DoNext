@@ -40,9 +40,18 @@ export async function GET(req: Request) {
         });
 
         const results = [
-            ...tasks.map((t: { id: string; title: string; category?: string }) => ({ id: t.id, title: t.title, type: 'Task', category: t.category, href: `/tasks/${t.id}` })),
-            ...habits.map((h: { id: string; name: string; category?: string }) => ({ id: h.id, title: h.name, type: 'Habit', category: h.category, href: `/habits` })),
-            ...routines.map((r: { id: string; task: string; category?: string }) => ({ id: r.id, title: r.task, type: 'Routine', category: r.category, href: `/routine` }))
+            ...tasks.map((t: unknown) => {
+                const task = t as { id: string; title: string; category?: string };
+                return { id: task.id, title: task.title, type: 'Task', category: task.category, href: `/tasks/${task.id}` };
+            }),
+            ...habits.map((h: unknown) => {
+                const habit = h as { id: string; name: string; category?: string };
+                return { id: habit.id, title: habit.name, type: 'Habit', category: habit.category, href: `/habits` };
+            }),
+            ...routines.map((r: unknown) => {
+                const routine = r as { id: string; task: string; category?: string };
+                return { id: routine.id, title: routine.task, type: 'Routine', category: routine.category, href: `/routine` };
+            })
         ];
 
         return NextResponse.json(results);

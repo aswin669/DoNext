@@ -10,6 +10,12 @@ interface AnalyticsData {
     totalTasks: number;
     completedTasks: number;
     completionRate: number;
+    avgCompletion?: number;
+    bestStreak?: number;
+    intensityData?: Record<string, number>;
+    weeklyTrend?: number[];
+    categoryAnalysis?: Array<{ name: string; percentage: number }>;
+    habitStats?: Array<{ name: string; percentage: number; streak?: number }>;
 }
 
 export default function Analytics() {
@@ -34,24 +40,8 @@ export default function Analytics() {
         fetchAnalytics();
     }, []);
 
-    const handleDayClick = async (dayIndex: number) => {
+    const handleDayClick = (dayIndex: number) => {
         setSelectedDay(dayIndex);
-        try {
-            const startDate = new Date();
-            startDate.setDate(startDate.getDate() - (6 - dayIndex));
-            startDate.setHours(0, 0, 0, 0);
-
-            const endDate = new Date(startDate);
-            endDate.setHours(23, 59, 59, 999);
-
-            const res = await fetch(`/api/tasks/by-date?start=${startDate.toISOString()}&end=${endDate.toISOString()}`);
-            if (res.ok) {
-                const tasks = await res.json();
-                setDayTasks(tasks);
-            }
-        } catch (error) {
-            console.error("Error fetching day tasks:", error);
-        }
     };
 
     if (loading) {
@@ -222,7 +212,7 @@ export default function Analytics() {
                                     <button className="text-xs font-bold text-primary hover:underline">Manage Habits</button>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {(data?.habitStats || []).length > 0 ? data.habitStats.map((habit: { name: string; percentage: number }) => (
+                                    {(data?.habitStats || []).length > 0 ? data?.habitStats?.map((habit: { name: string; percentage: number; streak?: number }) => (
                                         <div key={habit.name} className="p-4 border border-slate-50 dark:border-[#222] rounded-2xl flex flex-col items-center text-center">
                                             <div className="relative size-16 mb-3">
                                                 <svg className="size-full -rotate-90" viewBox="0 0 36 36">

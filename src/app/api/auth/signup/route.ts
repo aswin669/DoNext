@@ -1,6 +1,7 @@
 import { AuthService } from "@/lib/auth-service";
 import { validateRequestBody, createErrorResponse, createSuccessResponse } from "@/lib/errors";
 import { signupSchema, SignupInput } from "@/lib/validation";
+import { AppError } from "@/types";
 
 export async function POST(req: Request) {
     try {
@@ -15,6 +16,6 @@ export async function POST(req: Request) {
 
         return createSuccessResponse({ message: "User created" });
     } catch (error: unknown) {
-        return createErrorResponse(error);
+        return createErrorResponse(error as Error | AppError);
     }
 }

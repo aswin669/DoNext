@@ -54,12 +54,13 @@ export async function GET() {
         });
         
         const categoryMap = new Map<string, { total: number; completed: number }>();
-        allTasks.forEach((t: { category?: string; completed: boolean }) => {
-            if (t.category) {
-                const current = categoryMap.get(t.category) || { total: 0, completed: 0 };
+        allTasks.forEach((t: unknown) => {
+            const task = t as { category?: string; completed: boolean };
+            if (task.category) {
+                const current = categoryMap.get(task.category) || { total: 0, completed: 0 };
                 current.total++;
-                if (t.completed) current.completed++;
-                categoryMap.set(t.category, current);
+                if (task.completed) current.completed++;
+                categoryMap.set(task.category, current);
             }
         });
 

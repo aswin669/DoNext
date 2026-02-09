@@ -22,6 +22,8 @@ export default function Habits() {
     const [loading, setLoading] = useState(true);
     const [currentMonthName, setCurrentMonthName] = useState("");
     const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [activeDay, setActiveDay] = useState<number | null>(null);
 
     useEffect(() => {
         const date = new Date();
