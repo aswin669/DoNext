@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Sidebar from "@/components/Sidebar";
+import PageLayout from "@/components/PageLayout";
 
 interface SearchResult {
     id: string;
@@ -91,31 +91,10 @@ function SearchResultsContent() {
 
 export default function SearchResults() {
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-[#333] dark:text-white min-h-screen flex flex-col">
-            <header className="flex items-center justify-between border-b border-[#E0E0E0] dark:border-[#222] bg-white dark:bg-[#1A1A1A] px-6 py-3 sticky top-0 z-40">
-                <div className="flex items-center gap-8">
-                    <Link href="/dashboard" className="flex items-center gap-2">
-                        <div className="size-8 text-primary">
-                            <svg className="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M24 4L6 14V34L24 44L42 34V14L24 4Z" fill="currentColor" fillOpacity="0.2"></path>
-                                <path d="M24 4L42 14V34L24 44L6 34V14L24 4Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4"></path>
-                                <path d="M24 12V36" stroke="currentColor" strokeLinecap="round" strokeWidth="4"></path>
-                                <path d="M12 20L24 28L36 20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4"></path>
-                            </svg>
-                        </div>
-                        <h2 className="text-xl font-bold tracking-tight">DoNext</h2>
-                    </Link>
-                </div>
-            </header>
-
-            <div className="flex flex-1 w-full max-w-[1600px] mx-auto">
-                <Sidebar />
-                <main className="flex-1 p-6 md:p-8 overflow-y-auto">
-                    <Suspense fallback={<div>Loading search...</div>}>
-                        <SearchResultsContent />
-                    </Suspense>
-                </main>
-            </div>
-        </div>
+        <PageLayout>
+            <Suspense fallback={<div>Loading search...</div>}>
+                <SearchResultsContent />
+            </Suspense>
+        </PageLayout>
     );
 }
