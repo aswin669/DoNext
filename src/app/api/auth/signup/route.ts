@@ -16,6 +16,7 @@ export async function POST(req: Request) {
 
         return createSuccessResponse({ message: "User created" });
     } catch (error: unknown) {
+        console.error("Signup error:", error);
         return createErrorResponse(error as Error | AppError);
     }
 }

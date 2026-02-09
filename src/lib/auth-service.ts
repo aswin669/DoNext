@@ -164,11 +164,15 @@ export class AuthService {
 
             return user as AuthUser;
         } catch (error: unknown) {
-            const prismaError = error as { code?: string };
+            const prismaError = error as { code?: string; message?: string };
+            console.error("Registration error details:", {
+                code: prismaError.code,
+                message: prismaError.message,
+                error: error
+            });
             if (prismaError.code === 'P2002') {
                 throw new Error("User with this email already exists");
             }
-            console.error("Registration error:", error);
             throw new Error("Failed to create user");
         }
     }
