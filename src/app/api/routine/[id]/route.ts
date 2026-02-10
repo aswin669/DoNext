@@ -44,7 +44,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         
         // Delete step and its completions (cascading handled by Prisma if configured, otherwise manually)
         await prisma.routineCompletion.deleteMany({
-            where: { stepId: id }
+            where: { routineStepId: id }
         });
 
         await prisma.routineStep.delete({
