@@ -57,6 +57,18 @@ export default function RoutineManagement() {
         }
     };
 
+    const deleteStep = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this routine step?")) return;
+        try {
+            const res = await fetch(`/api/routine/${id}`, { method: "DELETE" });
+            if (res.ok) {
+                setRoutine(routine.filter(item => item.id !== id));
+            }
+        } catch (error) {
+            console.error("Delete error:", error);
+        }
+    };
+
     const activeRoutine = routine.filter(item => item.active);
     const completedCount = activeRoutine.filter(item => item.completed).length;
     const totalCount = activeRoutine.length;
@@ -153,7 +165,24 @@ export default function RoutineManagement() {
                                                 <div className="flex-1">
                                                     <div className="flex items-center justify-between mb-1">
                                                         <p className={`text-sm font-bold transition-all ${item.completed ? 'text-slate-400 line-through decoration-primary decoration-2' : item.active ? 'text-slate-800 dark:text-white' : 'text-slate-500'}`}>{item.task}</p>
-                                                        <p className="text-[10px] font-black uppercase text-primary tracking-widest bg-primary/5 px-2 py-0.5 rounded">{item.time}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-[10px] font-black uppercase text-primary tracking-widest bg-primary/5 px-2 py-0.5 rounded">{item.time}</p>
+                                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <Link 
+                                                                    href={`/routine/${item.id}/edit`}
+                                                                    onClick={(e) => { e.stopPropagation(); }}
+                                                                    className="size-7 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-primary transition-all"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                                </Link>
+                                                                <button 
+                                                                    onClick={(e) => { e.stopPropagation(); deleteStep(item.id); }}
+                                                                    className="size-7 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <p className="text-xs text-slate-400 font-medium">{item.category}</p>
                                                 </div>

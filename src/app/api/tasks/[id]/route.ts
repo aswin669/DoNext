@@ -58,3 +58,26 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         return NextResponse.json({ error: "Failed to update task" }, { status: 500 });
     }
 }
+
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const user = await AuthService.getCurrentUser();
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        
+        const { id } = await params;
+        
+        await prisma.task.delete({
+            where: { 
+                id,
+                userId: user.id
+            }
+        });
+        
+        return NextResponse.json({ message: "Task deleted" });
+    } catch (error) {
+        console.error("Task DELETE Error:", error);
+        return NextResponse.json({ error: "Failed to delete task" }, { status: 500 });
+    }
+}

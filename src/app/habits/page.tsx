@@ -71,6 +71,18 @@ export default function Habits() {
         }
     };
 
+    const deleteHabit = async (habitId: string) => {
+        if (!confirm("Are you sure you want to delete this habit and all its completions?")) return;
+        try {
+            const res = await fetch(`/api/habits/${habitId}`, { method: "DELETE" });
+            if (res.ok) {
+                setHabitsData(prev => prev.filter(h => h.id !== habitId));
+            }
+        } catch (error) {
+            console.error("Delete habit error:", error);
+        }
+    };
+
     const isDone = (habit: Habit, day: number) => {
         return habit.completions.some(c => {
             const d = new Date(c.date);
@@ -136,8 +148,25 @@ export default function Habits() {
                                 {/* Habit Rows */}
                                 {habitsData.length > 0 ? habitsData.map((habit) => (
                                     <div key={habit.id} className="contents">
-                                        <div className="sticky left-0 bg-white dark:bg-[#1A1A1A] p-4 flex items-center gap-3 text-sm font-semibold border-r border-slate-100 dark:border-[#333] border-b z-30 shadow-[4px_0_8px_rgba(0,0,0,0.02)]">
-                                            <span className="text-xl">{habit.icon}</span> <span className="truncate">{habit.name}</span>
+                                        <div className="sticky left-0 bg-white dark:bg-[#1A1A1A] p-4 flex items-center justify-between text-sm font-semibold border-r border-slate-100 dark:border-[#333] border-b z-30 shadow-[4px_0_8px_rgba(0,0,0,0.02)] group">
+                                            <div className="flex items-center gap-3 truncate">
+                                                <span className="text-xl">{habit.icon}</span> 
+                                                <span className="truncate">{habit.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                                                <Link 
+                                                    href={`/habits/${habit.id}/edit`}
+                                                    className="size-7 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-primary transition-all"
+                                                >
+                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                </Link>
+                                                <button 
+                                                    onClick={() => deleteHabit(habit.id)}
+                                                    className="size-7 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all"
+                                                >
+                                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                </button>
+                                            </div>
                                         </div>
                                         {daysInMonth.map((day) => {
                                             const done = isDone(habit, day);
@@ -171,7 +200,21 @@ export default function Habits() {
                         const count = habit.completions.length;
                         const percent = Math.round((count / daysInMonth.length) * 100);
                         return (
-                            <div key={habit.id} className="bg-white dark:bg-[#1A1A1A] p-6 rounded-3xl border border-slate-200 dark:border-[#222] shadow-sm">
+                            <div key={habit.id} className="bg-white dark:bg-[#1A1A1A] p-6 rounded-3xl border border-slate-200 dark:border-[#222] shadow-sm relative group">
+                                <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Link 
+                                        href={`/habits/${habit.id}/edit`}
+                                        className="size-8 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-primary transition-all border border-slate-100 dark:border-[#333]"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                                    </Link>
+                                    <button 
+                                        onClick={() => deleteHabit(habit.id)}
+                                        className="size-8 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all border border-slate-100 dark:border-[#333]"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl">
                                         {habit.icon}

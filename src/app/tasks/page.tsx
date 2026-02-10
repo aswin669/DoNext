@@ -97,6 +97,18 @@ export default function MyTasks() {
         }
     };
 
+    const deleteTask = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this task?")) return;
+        try {
+            const res = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+            if (res.ok) {
+                setTasks(prev => prev.filter(t => t.id !== id));
+            }
+        } catch (error) {
+            console.error("Delete error:", error);
+        }
+    };
+
     const importantTasks = tasks.filter(t => t.category === "Important" || t.priority === "High");
     const otherTasks = tasks.filter(t => t.category !== "Important" && t.priority !== "High" && t.category !== "Study");
     
@@ -329,8 +341,16 @@ export default function MyTasks() {
                                                 <p className="text-xs text-slate-400 truncate max-w-[150px]">{task.description || "No description"}</p>
                                             </div>
                                         </div>
-                                        <div className="size-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <span className="material-symbols-outlined text-[16px] text-slate-400">more_vert</span>
+                                        <div className="flex items-center gap-1">
+                                            <Link href={`/tasks/${task.id}/edit`} className="size-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-primary transition-all">
+                                                <span className="material-symbols-outlined text-[18px]">edit</span>
+                                            </Link>
+                                            <button 
+                                                onClick={() => deleteTask(task.id)}
+                                                className="size-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all"
+                                            >
+                                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                                            </button>
                                         </div>
                                     </div>
                                 )) : (
@@ -368,6 +388,15 @@ export default function MyTasks() {
                                                 className={`size-8 rounded-full flex items-center justify-center transition-all ${task.completed ? "bg-primary text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-300 hover:text-purple-500"}`}
                                             >
                                                 <span className="material-symbols-outlined text-[20px]">{task.completed ? "done" : "circle"}</span>
+                                            </button>
+                                            <Link href={`/tasks/study/${task.id}/edit`} className="size-8 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                                                <span className="material-symbols-outlined text-[18px]">edit</span>
+                                            </Link>
+                                            <button 
+                                                onClick={() => deleteTask(task.id)}
+                                                className="size-8 rounded-full flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                                            >
+                                                <span className="material-symbols-outlined text-[18px]">delete</span>
                                             </button>
                                             <Link href={`/tasks/${task.id}`} className="size-8 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all opacity-0 group-hover:opacity-100">
                                                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -414,9 +443,22 @@ export default function MyTasks() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span className={`text-xs font-bold px-2 py-1 rounded ${task.completed ? "bg-emerald-100 text-emerald-600" : "bg-orange-100 text-orange-600"}`}>
-                                                    {task.completed ? "Done" : "Pending"}
-                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`text-xs font-bold px-2 py-1 rounded ${task.completed ? "bg-emerald-100 text-emerald-600" : "bg-orange-100 text-orange-600"}`}>
+                                                        {task.completed ? "Done" : "Pending"}
+                                                    </span>
+                                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <Link href={`/tasks/${task.id}/edit`} className="size-8 rounded-full flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                                                            <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                        </Link>
+                                                        <button 
+                                                            onClick={() => deleteTask(task.id)}
+                                                            className="size-8 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                                                        >
+                                                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         );
                                     })}
@@ -454,12 +496,25 @@ export default function MyTasks() {
                                             <h3 className={`text-base font-extrabold ${task.completed ? "text-slate-400 line-through" : "text-red-900 dark:text-red-100"}`}>{task.title}</h3>
                                             <p className="text-sm text-red-700/70 dark:text-red-400/70 truncate">{task.location || "No location set"}</p>
                                         </div>
-                                        <button
-                                            onClick={() => toggleTask(task.id)}
-                                            className={`w-full py-2 rounded-xl text-xs font-black uppercase transition-all ${task.completed ? "bg-slate-200 text-slate-500" : "bg-red-500 text-white shadow-lg shadow-red-500/30 hover:brightness-110"}`}
-                                        >
-                                            {task.completed ? "Reactivate" : "Mark as Resolved"}
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => toggleTask(task.id)}
+                                                className={`flex-1 py-2 rounded-xl text-xs font-black uppercase transition-all ${task.completed ? "bg-slate-200 text-slate-500" : "bg-red-500 text-white shadow-lg shadow-red-500/30 hover:brightness-110"}`}
+                                            >
+                                                {task.completed ? "Reactivate" : "Mark as Resolved"}
+                                            </button>
+                                            <div className="flex items-center gap-1">
+                                                <Link href={`/tasks/${task.id}/edit`} className="size-9 rounded-xl bg-white/20 dark:bg-black/20 flex items-center justify-center text-red-500 hover:bg-white/40 transition-all">
+                                                    <span className="material-symbols-outlined text-[18px]">edit</span>
+                                                </Link>
+                                                <button 
+                                                    onClick={() => deleteTask(task.id)}
+                                                    className="size-9 rounded-xl bg-white/20 dark:bg-black/20 flex items-center justify-center text-red-500 hover:bg-white/40 transition-all"
+                                                >
+                                                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             )) : (

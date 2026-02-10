@@ -137,6 +137,15 @@ export default function TaskDetail() {
                                         <p className="text-slate-500 font-medium">
                                             Goal ID: <span className="font-mono text-[10px]">{task.id}</span>
                                         </p>
+                                        <div className="mt-4 flex items-center gap-2">
+                                            <Link 
+                                                href={isStudy ? `/tasks/study/${task.id}/edit` : `/tasks/${task.id}/edit`}
+                                                className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-[#2A2A2A] rounded-xl text-xs font-bold hover:bg-primary hover:text-white transition-all"
+                                            >
+                                                <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                Edit Goal
+                                            </Link>
+                                        </div>
                                     </div>
 
                                     <button
